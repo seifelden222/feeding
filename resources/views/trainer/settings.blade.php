@@ -2,6 +2,15 @@
 
 <html dir="rtl" lang="ar">
 
+@php
+  $trainer = auth()->user();
+  $trainerName = old('name', $trainer?->name ?? '');
+  $trainerEmail = old('email', $trainer?->email ?? '');
+  $trainerAvatar = asset('img/logo.png');
+  $trainerSpecialization = 'غير محدد بعد';
+  $trainerBio = 'يمكنك إضافة نبذة مهنية مخصصة بعد توسيع جدول المستخدمين أو ربط المدرب بجدول nutritionists.';
+@endphp
+
 <head>
   <meta charset="utf-8" />
   <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -67,7 +76,9 @@
           <div class="p-6 space-y-6">
             <div class="flex flex-col md:flex-row items-center gap-6">
               <div class="relative group">
-                <div class="w-32 h-32 rounded-full border-4 border-primary/20 bg-cover bg-center" data-alt="صورة شخصية للمدرب الرياضي" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBlwDb1O9THRHQ7778ZI_Me9Vhzv5ANuTsCCUjprEqF8ipnCqBj_QJfe3IibUXDQ2DSMF_6X44n9_nNfba0aClV4X9oqy4bCjOJ6uJ-clfds_Di2h49kRspc96lqzj_MNhCxPN0BO1Uy1A0I8oHllQim3-zJf9UfDfWtifQRHm3GvXZqV2tvcgR0QqB9BeUP5rK3WscovBirrktcmCWa7q7Gn0-0rMp6vs7fpPQkIyEQRZQEwG7VFw9BCG_oFUMWz6SploZhGM46moX')"></div>
+                <div class="h-32 w-32 overflow-hidden rounded-full border-4 border-primary/20 bg-white">
+                  <img src="{{ $trainerAvatar }}" alt="{{ $trainerName }}" class="h-full w-full object-cover">
+                </div>
                 <button class="absolute bottom-0 right-0 bg-primary text-white p-2 rounded-full hover:bg-primary/90 shadow-lg">
                   <span class="material-symbols-outlined text-sm">edit</span>
                 </button>
@@ -76,16 +87,16 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div class="space-y-2">
                     <label class="text-sm font-medium text-slate-700 dark:text-slate-300">الاسم الكامل</label>
-                    <input class="w-full rounded-lg border-slate-300 focus:border-primary focus:ring-primary dark:bg-slate-900 dark:border-slate-700" type="text" value="أحمد علي" />
+                    <input class="w-full rounded-lg border-slate-300 focus:border-primary focus:ring-primary dark:bg-slate-900 dark:border-slate-700" type="text" value="{{ $trainerName }}" />
                   </div>
                   <div class="space-y-2">
                     <label class="text-sm font-medium text-slate-700 dark:text-slate-300">التخصص</label>
-                    <input class="w-full rounded-lg border-slate-300 focus:border-primary focus:ring-primary dark:bg-slate-900 dark:border-slate-700" type="text" value="أخصائي تغذية رياضية" />
+                    <input class="w-full rounded-lg border-slate-300 focus:border-primary focus:ring-primary dark:bg-slate-900 dark:border-slate-700" type="text" value="{{ $trainerSpecialization }}" />
                   </div>
                 </div>
                 <div class="space-y-2">
                   <label class="text-sm font-medium text-slate-700 dark:text-slate-300">السيرة الذاتية المهنية</label>
-                  <textarea class="w-full rounded-lg border-slate-300 focus:border-primary focus:ring-primary dark:bg-slate-900 dark:border-slate-700" rows="3">خبرة 10 سنوات في تصميم الخطط الغذائية المخصصة للرياضيين ومتابعة الأداء البدني.</textarea>
+                  <textarea class="w-full rounded-lg border-slate-300 focus:border-primary focus:ring-primary dark:bg-slate-900 dark:border-slate-700" rows="3">{{ $trainerBio }}</textarea>
                 </div>
               </div>
             </div>
@@ -103,7 +114,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div class="space-y-2">
                 <label class="text-sm font-medium text-slate-700 dark:text-slate-300">البريد الإلكتروني</label>
-                <input class="w-full rounded-lg border-slate-300 focus:border-primary focus:ring-primary dark:bg-slate-900 dark:border-slate-700" type="email" value="coach.ahmed@nutrizone.com" />
+                <input class="w-full rounded-lg border-slate-300 focus:border-primary focus:ring-primary dark:bg-slate-900 dark:border-slate-700" type="email" value="{{ $trainerEmail }}" />
               </div>
               <div class="space-y-2">
                 <label class="text-sm font-medium text-slate-700 dark:text-slate-300">تغيير كلمة المرور</label>
