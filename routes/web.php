@@ -31,7 +31,6 @@ Route::prefix('trainer')->name('trainer.')->middleware('auth')->group(function (
     Route::view('/plansmanage', 'trainer.plansmanage')->name('plansmanage');
     Route::view('/usermanage', 'trainer.usermanage')->name('usermanage');
     Route::view('/settings', 'trainer.settings')->name('settings');
-
 });
 
 require __DIR__.'/auth.php';

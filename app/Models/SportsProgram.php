@@ -5,21 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class NutritionPlan extends Model
+class SportsProgram extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'treatment_program_id',
         'title',
-        'daily_calorie_target',
-        'protein_g',
-        'carb_g',
-        'fat_g',
-        'plan_notes',
+        'frequency_per_week',
+        'intensity_level',
+        'program_notes',
         'status',
         'created_by_specialist_user_id',
     ];
@@ -27,10 +24,7 @@ class NutritionPlan extends Model
     protected function casts(): array
     {
         return [
-            'daily_calorie_target' => 'integer',
-            'protein_g' => 'decimal:2',
-            'carb_g' => 'decimal:2',
-            'fat_g' => 'decimal:2',
+            'frequency_per_week' => 'integer',
         ];
     }
 
@@ -44,20 +38,8 @@ class NutritionPlan extends Model
         return $this->belongsTo(SpecialistProfile::class, 'created_by_specialist_user_id', 'user_id');
     }
 
-    public function mealTemplates(): BelongsToMany
-    {
-        return $this->belongsToMany(MealTemplate::class, 'nutrition_plan_meals')
-            ->withPivot(['day_of_week', 'sequence_no'])
-            ->withTimestamps();
-    }
-
     public function assignments(): HasMany
     {
         return $this->hasMany(PatientPlanAssignment::class);
-    }
-
-    public function followUpReports(): HasMany
-    {
-        return $this->hasMany(FollowUpReport::class);
     }
 }
