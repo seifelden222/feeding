@@ -83,6 +83,38 @@
                 <form class="space-y-5" method="POST" action="{{ route('register') }}">
                     @csrf
 
+                    <div class="space-y-3">
+                        <label class="block text-sm font-extrabold text-darkTeal pr-1">نوع الحساب</label>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <label class="cursor-pointer">
+                                <input class="peer sr-only" name="role" type="radio" value="user" {{ old('role', 'user') === 'user' ? 'checked' : '' }}>
+                                <div class="rounded-2xl border-2 border-slate-200 bg-slate-50 px-5 py-4 transition-all peer-checked:border-primary peer-checked:bg-emerald-50 peer-checked:shadow-lg peer-checked:shadow-primary/10">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="font-black text-darkTeal">مستخدم</span>
+                                        <span class="material-symbols-outlined text-primary">person</span>
+                                    </div>
+                                    <p class="text-sm text-slate-500 font-medium">للمتابعة اليومية والخطط وتتبع التقدم.</p>
+                                </div>
+                            </label>
+
+                            <label class="cursor-pointer">
+                                <input class="peer sr-only" name="role" type="radio" value="trainer" {{ old('role') === 'trainer' ? 'checked' : '' }}>
+                                <div class="rounded-2xl border-2 border-slate-200 bg-slate-50 px-5 py-4 transition-all peer-checked:border-primary peer-checked:bg-emerald-50 peer-checked:shadow-lg peer-checked:shadow-primary/10">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="font-black text-darkTeal">Trainer</span>
+                                        <span class="material-symbols-outlined text-primary">fitness_center</span>
+                                    </div>
+                                    <p class="text-sm text-slate-500 font-medium">لإدارة العملاء والبرامج والمتابعة.</p>
+                                </div>
+                            </label>
+                        </div>
+
+                        <p class="text-red-500 text-xs pr-1 {{ $errors->has('role') ? '' : 'hidden' }}">
+                            {{ $errors->first('role') }}
+                        </p>
+                    </div>
+
                     <div class="space-y-2">
                         <label class="block text-sm font-extrabold text-darkTeal pr-1" for="su-name">الاسم الكامل</label>
 

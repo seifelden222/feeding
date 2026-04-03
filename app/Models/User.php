@@ -25,6 +25,7 @@ class User extends Authenticatable
         'email',
         'phone',
         'status',
+        'role',
         'password',
     ];
 
@@ -74,5 +75,24 @@ class User extends Authenticatable
     public function hasRole(string $roleName): bool
     {
         return $this->roles()->where('name', $roleName)->exists();
+    }
+
+    public function isTrainer(): bool
+    {
+        return $this->role === 'trainer';
+    }
+
+    public function isUser(): bool
+    {
+        return $this->role === 'user';
+    }
+
+    public function homeRouteName(): string
+    {
+        if ($this->isTrainer()) {
+            return 'trainer.home';
+        }
+
+        return 'user.home';
     }
 }

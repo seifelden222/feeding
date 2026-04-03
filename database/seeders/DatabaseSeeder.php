@@ -89,11 +89,16 @@ class DatabaseSeeder extends Seeder
             'adherence_logs.create_self',
         ])->pluck('id'));
 
-        $user = User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        $adminUser = User::query()->firstOrCreate(
+            ['email' => 'test@example.com'],
+            User::factory()->make([
+                'name' => 'Test User',
+                'role' => 'trainer',
+            ])->toArray(),
+        );
 
-        $user->roles()->syncWithoutDetaching([$adminRole->id]);
+        $adminUser->roles()->syncWithoutDetaching([$adminRole->id]);
+
+        $this->call(DemoUsersSeeder::class);
     }
 }

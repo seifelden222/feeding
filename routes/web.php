@@ -25,12 +25,21 @@ Route::view('/contactus', 'contactus')->name('contactus');
 Route::view('/systems', 'systems')->name('systems');
 Route::view('/diseases', 'diseases')->name('diseases');
 
-Route::prefix('trainer')->name('trainer.')->middleware('auth')->group(function () {
+Route::prefix('trainer')->name('trainer.')->middleware(['auth', 'role:trainer'])->group(function () {
     Route::view('/home', 'trainer.home')->name('home');
     Route::view('/messages', 'trainer.messages')->name('messages');
     Route::view('/plansmanage', 'trainer.plansmanage')->name('plansmanage');
     Route::view('/usermanage', 'trainer.usermanage')->name('usermanage');
     Route::view('/settings', 'trainer.settings')->name('settings');
+});
+
+Route::prefix('user')->name('user.')->middleware(['auth', 'role:user'])->group(function () {
+    Route::view('/home', 'user.home')->name('home');
+    Route::view('/messages', 'user.messages')->name('messages');
+    Route::view('/plans', 'user.plans')->name('plans');
+    Route::view('/progress', 'user.progress')->name('progress');
+    Route::view('/quest', 'user.quest')->name('quest');
+    Route::view('/settings', 'user.settings')->name('settings');
 });
 
 require __DIR__.'/auth.php';
