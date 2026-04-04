@@ -33,6 +33,17 @@
     ];
 @endphp
 
+<script>
+    (() => {
+        const savedTheme = localStorage.getItem('nutrizone-theme') || 'light';
+        const savedLanguage = localStorage.getItem('nutrizone-language') || 'ar';
+
+        document.documentElement.classList.toggle('dark', savedTheme === 'dark');
+        document.documentElement.lang = savedLanguage;
+        document.documentElement.dir = savedLanguage === 'ar' ? 'rtl' : 'ltr';
+    })();
+</script>
+
 <aside class="sticky top-0 flex h-screen w-64 flex-col border-l border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
     <div class="flex flex-col gap-6 p-6">
         <div class="mb-10 flex justify-center">

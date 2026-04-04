@@ -262,8 +262,11 @@
                         <!-- Upcoming Appointments -->
                         <section
                             class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6">
-                            <h4 class="text-lg font-bold mb-6">المواعيد القادمة</h4>
-                            <div class="space-y-4">
+                            <div class="mb-6 flex items-center justify-between gap-3">
+                                <h4 class="text-lg font-bold">الحجز والاستشارة</h4>
+                                <span class="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">محدثة</span>
+                            </div>
+                            <div id="appointments-list" class="space-y-4">
                                 <!-- Appointment 1 -->
                                 <div class="flex gap-4">
                                     <div
@@ -302,6 +305,7 @@
                                 </div>
                             </div>
                             <button
+                                id="manage-appointments-btn"
                                 class="w-full mt-6 py-3 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-xl text-sm font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                                 إدارة المواعيد
                             </button>
@@ -393,7 +397,7 @@
                 </div>
             </div>
             <div class="flex gap-3 mt-5">
-                <button onclick="confirmBook()" class="flex-1 bg-primary text-white py-2 rounded-xl font-bold">تأكيد
+                <button id="confirm-booking-btn" onclick="confirmBook()" class="flex-1 bg-primary text-white py-2 rounded-xl font-bold">تأكيد
                     الحجز</button>
                 <button onclick="document.getElementById('book-modal').classList.add('hidden')"
                     class="flex-1 border border-slate-200 py-2 rounded-xl font-bold">إلغاء</button>
@@ -480,6 +484,8 @@
     </div>
 
     <script>
+        const bookingsKey = 'nutrizone-bookings';
+
         function showToast(msg) {
             const t = document.createElement('div');
             t.className =
@@ -495,9 +501,73 @@
             document.getElementById('book-modal').classList.remove('hidden');
         }
 
+        function renderBookings() {
+            const bookings = JSON.parse(localStorage.getItem(bookingsKey) || '[]');
+            const list = document.getElementById('appointments-list');
+
+            if (!list) {
+                return;
+            }
+
+            if (!bookings.length) {
+                list.innerHTML =
+                    '<div class="rounded-xl bg-slate-50 p-4 text-sm text-slate-500 dark:bg-slate-800 dark:text-slate-300">لا توجد مواعيد محفوظة حالياً.</div>';
+
+                return;
+            }
+
+            list.innerHTML = bookings.map((booking) => `
+                <div class="flex gap-4 rounded-xl border border-slate-100 p-3 dark:border-slate-800">
+                    <div class="flex flex-col items-center justify-center bg-primary/10 rounded-xl px-3 py-2 h-fit">
+                        <span class="text-primary font-bold text-sm">${booking.month}</span>
+                        <span class="text-primary font-black text-xl">${booking.day}</span>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-xs text-slate-500 mb-1">${booking.time}</p>
+                        <h6 class="font-bold text-slate-900 dark:text-white">${booking.name}</h6>
+                        <div class="flex items-center gap-2 mt-2">
+                            <span class="w-2 h-2 bg-primary rounded-full"></span>
+                            <span class="text-xs font-medium text-slate-600 dark:text-slate-400">${booking.type}</span>
+                        </div>
+                    </div>
+                    <button class="delete-booking text-rose-500" data-id="${booking.id}" type="button">
+                        <span class="material-symbols-outlined">delete</span>
+                    </button>
+                </div>
+            `).join('');
+
+            document.querySelectorAll('.delete-booking').forEach((button) => {
+                button.addEventListener('click', () => {
+                    const nextBookings = bookings.filter((booking) => booking.id !== button.dataset.id);
+                    localStorage.setItem(bookingsKey, JSON.stringify(nextBookings));
+                    renderBookings();
+                    showToast('تم حذف الموعد المحفوظ');
+                });
+            });
+        }
+
         function confirmBook() {
+            const modal = document.getElementById('book-modal');
+            const dateInput = modal.querySelector('input[type="date"]');
+            const selects = modal.querySelectorAll('select');
+            const selectedDate = dateInput.value ? new Date(dateInput.value) : new Date();
+            const currentBookings = JSON.parse(localStorage.getItem(bookingsKey) || '[]');
+
+            currentBookings.unshift({
+                id: crypto.randomUUID(),
+                name: document.getElementById('book-expert-name').textContent,
+                day: String(selectedDate.getDate()).padStart(2, '0'),
+                month: selectedDate.toLocaleDateString('ar-EG', {
+                    month: 'long',
+                }),
+                time: selects[0].value,
+                type: selects[1].value,
+            });
+
+            localStorage.setItem(bookingsKey, JSON.stringify(currentBookings));
             document.getElementById('book-modal').classList.add('hidden');
             showToast('تم تأكيد الحجز بنجاح ✓');
+            renderBookings();
         }
 
         // Notifications
@@ -531,8 +601,13 @@
         document.querySelectorAll('button').forEach(btn => {
             if (btn.textContent.trim() === 'احجز الآن') btn.addEventListener('click', () => openBook(
                 'د. سارة أحمد'));
-            if (btn.textContent.includes('إدارة المواعيد')) btn.addEventListener('click', () => showToast(
-                'سيتم فتح صفحة إدارة المواعيد'));
+            if (btn.textContent.includes('إدارة المواعيد')) btn.addEventListener('click', () => {
+                document.getElementById('appointments-list')?.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center',
+                });
+                showToast('يمكنك إدارة المواعيد المحفوظة من هذه البطاقة');
+            });
             if (btn.textContent.includes('تحدث مع الدعم')) btn.addEventListener('click', () => document
                 .getElementById('support-modal').classList.remove('hidden'));
             if (btn.textContent.includes('عرض الكل')) btn.addEventListener('click', () => document.getElementById(
@@ -576,4 +651,5 @@
         document.getElementById('support-input')?.addEventListener('keydown', e => {
             if (e.key === 'Enter') sendSupport();
         });
+        renderBookings();
     </script>

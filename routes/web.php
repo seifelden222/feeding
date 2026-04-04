@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Trainer\UserManagementController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -29,7 +30,9 @@ Route::prefix('trainer')->name('trainer.')->middleware(['auth', 'role:trainer'])
     Route::view('/home', 'trainer.home')->name('home');
     Route::view('/messages', 'trainer.messages')->name('messages');
     Route::view('/plansmanage', 'trainer.plansmanage')->name('plansmanage');
-    Route::view('/usermanage', 'trainer.usermanage')->name('usermanage');
+    Route::get('/usermanage', [UserManagementController::class, 'index'])->name('usermanage');
+    Route::post('/users', [UserManagementController::class, 'store'])->name('users.store');
+    Route::patch('/users/{managed_user}', [UserManagementController::class, 'update'])->name('users.update');
     Route::view('/settings', 'trainer.settings')->name('settings');
 });
 

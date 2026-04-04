@@ -196,7 +196,7 @@
                   </div>
                   <div class="flex items-center gap-2">
                     <span class="px-3 py-1 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold rounded-full">متابعة أسبوعية</span>
-                    <button class="bg-slate-100 dark:bg-slate-700 text-slate-400 px-4 py-2 rounded-xl text-sm font-bold cursor-not-allowed">انتظار</button>
+                    <button class="approval-btn bg-amber-500 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-amber-600 transition-colors">موافقة</button>
                   </div>
                 </div>
                 <!-- Appointment 3 -->
@@ -213,7 +213,7 @@
                   </div>
                   <div class="flex items-center gap-2">
                     <span class="px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full">تعديل خطة</span>
-                    <button class="bg-slate-100 dark:bg-slate-700 text-slate-400 px-4 py-2 rounded-xl text-sm font-bold cursor-not-allowed">انتظار</button>
+                    <button class="approval-btn bg-amber-500 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-amber-600 transition-colors">موافقة</button>
                   </div>
                 </div>
               </div>
@@ -295,6 +295,16 @@
           // update dot on bell
           if (count <= 0) notifBtn.querySelector('.bg-red-500')?.remove();
         }
+      });
+    });
+
+    document.querySelectorAll('.approval-btn').forEach((button) => {
+      button.addEventListener('click', () => {
+        button.textContent = 'تمت الموافقة';
+        button.disabled = true;
+        button.classList.remove('bg-amber-500', 'hover:bg-amber-600');
+        button.classList.add('bg-emerald-600', 'opacity-80');
+        showToast('تمت الموافقة على الطلب');
       });
     });
 

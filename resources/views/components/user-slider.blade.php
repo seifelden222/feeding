@@ -20,16 +20,6 @@
             'route' => 'user.plans',
         ],
         [
-            'label' => 'تتبع التقدم',
-            'icon' => 'monitoring',
-            'route' => 'user.progress',
-        ],
-        [
-            'label' => 'الاستشارات',
-            'icon' => 'medical_services',
-            'route' => 'user.quest',
-        ],
-        [
             'label' => 'الإعدادات',
             'icon' => 'settings',
             'route' => 'user.settings',
@@ -37,6 +27,17 @@
         ],
     ];
 @endphp
+
+<script>
+    (() => {
+        const savedTheme = localStorage.getItem('nutrizone-theme') || 'light';
+        const savedLanguage = localStorage.getItem('nutrizone-language') || 'ar';
+
+        document.documentElement.classList.toggle('dark', savedTheme === 'dark');
+        document.documentElement.lang = savedLanguage;
+        document.documentElement.dir = savedLanguage === 'ar' ? 'rtl' : 'ltr';
+    })();
+</script>
 
 <aside
     class="fixed inset-y-0 right-0 z-50 w-64 bg-white dark:bg-gray-900 border-l border-gray-100 dark:border-gray-800 transform transition-transform duration-300 md:translate-x-0 translate-x-full"

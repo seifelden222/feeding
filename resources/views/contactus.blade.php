@@ -217,10 +217,10 @@
         <div>
           <h5 class="text-white font-black text-xl mb-8">روابط سريعة</h5>
           <ul class="space-y-4">
-            <li><a class="hover:text-primary transition-colors" href="index.html">الرئيسية</a></li>
-            <li><a class="hover:text-primary transition-colors" href="aboutus.html">من نحن</a></li>
-            <li><a class="hover:text-primary transition-colors" href="services.html">خدماتنا</a></li>
-            <li><a class="hover:text-primary transition-colors" href="contactus.html">اتصل بنا</a></li>
+            <li><a class="hover:text-primary transition-colors" href="{{ url('/') }}">الرئيسية</a></li>
+            <li><a class="hover:text-primary transition-colors" href="{{ route('aboutus') }}">من نحن</a></li>
+            <li><a class="hover:text-primary transition-colors" href="{{ route('services') }}">خدماتنا</a></li>
+            <li><a class="hover:text-primary transition-colors" href="{{ route('contactus') }}">اتصل بنا</a></li>
           </ul>
         </div>
         <div>
@@ -272,7 +272,7 @@
     <div id="modal-service-icon" class="w-16 h-16 bg-emerald-50 dark:bg-emerald-900/30 text-primary rounded-2xl flex items-center justify-center mb-5"></div>
     <h3 id="modal-service-title" class="text-2xl font-black mb-3 dark:text-white"></h3>
     <p id="modal-service-desc" class="text-slate-600 dark:text-slate-400 leading-relaxed mb-6"></p>
-    <a href="services.html" class="inline-block bg-primary hover:bg-emerald-600 text-white px-6 py-3 rounded-full font-bold transition-all">اكتشف المزيد</a>
+    <a href="{{ route('services') }}" class="inline-block bg-primary hover:bg-emerald-600 text-white px-6 py-3 rounded-full font-bold transition-all">اكتشف المزيد</a>
   </div>
 
   <div id="modal-map" class="fixed z-[101] hidden top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden w-full max-w-lg">

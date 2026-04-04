@@ -296,7 +296,7 @@
                 </div>
               </div>
               <!-- Dinner Section -->
-              <div class="bg-slate-50 dark:bg-slate-800/40 rounded-2xl p-6 border border-slate-100 dark:border-slate-800 opacity-60">
+              <div class="bg-slate-50 dark:bg-slate-800/40 rounded-2xl p-6 border border-slate-100 dark:border-slate-800">
                 <div class="flex items-center justify-between mb-4">
                   <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 flex items-center justify-center">
@@ -305,8 +305,28 @@
                     <h4 class="font-bold text-lg">العشاء</h4>
                   </div>
                 </div>
-                <div class="text-center py-4 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl">
-                  <p class="text-slate-400 text-sm">لم يتم إضافة وجبة عشاء بعد</p>
+                <div class="grid grid-cols-12 gap-4 items-end">
+                  <div class="col-span-4">
+                    <label class="block text-xs font-bold text-slate-400 mb-1">اسم الوجبة</label>
+                    <input class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm px-4 py-2" placeholder="مثلاً: سلطة تونة" type="text" />
+                  </div>
+                  <div class="col-span-2">
+                    <label class="block text-xs font-bold text-slate-400 mb-1">السعرات</label>
+                    <input class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm px-4 py-2" placeholder="300" type="number" />
+                  </div>
+                  <div class="col-span-2">
+                    <label class="block text-xs font-bold text-slate-400 mb-1">الماكروز</label>
+                    <input class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm px-4 py-2" placeholder="P/C/F" type="text" />
+                  </div>
+                  <div class="col-span-4 flex gap-2">
+                    <div class="flex-1">
+                      <label class="block text-xs font-bold text-slate-400 mb-1">المكونات</label>
+                      <input class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm px-4 py-2" placeholder="المكونات..." type="text" />
+                    </div>
+                    <button class="bg-primary text-white p-2 rounded-lg" type="button">
+                      <span class="material-symbols-outlined">add</span>
+                    </button>
+                  </div>
                 </div>
               </div>
               <!-- Snacks Section -->
@@ -341,7 +361,10 @@
               </div>
               <div class="flex gap-3">
                 <button id="publishPlanBtn" class="px-8 py-3 bg-white text-primary rounded-xl font-bold hover:bg-slate-50 transition-all">
-                  نشر الخطة للمتدرب
+                  موافقة ونشر الخطة
+                </button>
+                <button id="saveFinalPlanBtn" class="px-6 py-3 border border-white/30 rounded-xl font-bold hover:bg-white/10 transition-all">
+                  حفظ نهائي
                 </button>
                 <button id="previewPlanBtn" class="px-6 py-3 bg-primary-dark/20 border border-white/30 rounded-xl font-bold hover:bg-white/10 transition-all">
                   معاينة
@@ -422,6 +445,33 @@
       });
     });
 
+    const finalPlanKey = 'nutrizone-final-plans';
+    const summaryValues = document.querySelectorAll('.mt-12 .text-2xl.font-black');
+
+    function refreshPlanSummary() {
+      let calories = 0;
+      let protein = 0;
+
+      document.querySelectorAll('input[type="number"]').forEach((input) => {
+        calories += Number(input.value || 0);
+      });
+
+      document.querySelectorAll('input[placeholder="30/50/10"], input[placeholder="P/C/F"]').forEach((input) => {
+        const firstMacro = Number((input.value || '').split('/')[0] || 0);
+        if (!Number.isNaN(firstMacro)) {
+          protein += firstMacro;
+        }
+      });
+
+      if (summaryValues[0]) {
+        summaryValues[0].innerHTML = `${calories || 0} <span class="text-sm font-normal">سعرة</span>`;
+      }
+
+      if (summaryValues[1]) {
+        summaryValues[1].innerHTML = `${protein || 0} <span class="text-sm font-normal">جرام</span>`;
+      }
+    }
+
     // Add meal buttons
     let dayCount = 1;
 
@@ -476,10 +526,21 @@
     });
 
     document.getElementById('publishPlanBtn').addEventListener('click', function() {
-      this.innerHTML = '✓ تم النشر';
+      this.innerHTML = '✓ تمت الموافقة';
       this.disabled = true;
       this.classList.add('opacity-75');
-      showToast('✅ تم نشر الخطة للمتدرب بنجاح');
+      showToast('✅ تمت الموافقة ونشر الخطة للمتدرب بنجاح');
+    });
+
+    document.getElementById('saveFinalPlanBtn').addEventListener('click', () => {
+      const sections = [...document.querySelectorAll('.space-y-6 > div')].map((section) => ({
+        title: section.querySelector('h4')?.textContent.trim() || '',
+        values: [...section.querySelectorAll('input')].map((input) => input.value).filter(Boolean),
+      })).filter((section) => section.title);
+
+      localStorage.setItem(finalPlanKey, JSON.stringify(sections));
+      refreshPlanSummary();
+      showToast('تم حفظ البيانات النهائية وتحديثها');
     });
 
     document.getElementById('previewPlanBtn').addEventListener('click', () => {
@@ -546,6 +607,7 @@
             newRow.querySelectorAll('input').forEach(i => i.value = '');
             row.after(newRow);
             showToast('تم إضافة وجبة جديدة');
+            newRow.querySelectorAll('input').forEach((input) => input.addEventListener('input', refreshPlanSummary));
           }
         });
       }
@@ -564,5 +626,7 @@
     saveModal.addEventListener('click', (e) => {
       if (e.target === saveModal) saveModal.classList.add('hidden');
     });
+    document.querySelectorAll('input').forEach((input) => input.addEventListener('input', refreshPlanSummary));
+    refreshPlanSummary();
   </script>
 </body>

@@ -61,6 +61,16 @@
                 box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.1) !important;
             }
         </style>
+        <script>
+            (() => {
+                const savedTheme = localStorage.getItem('nutrizone-theme') || 'light';
+                const savedLanguage = localStorage.getItem('nutrizone-language') || 'ar';
+
+                document.documentElement.classList.toggle('dark', savedTheme === 'dark');
+                document.documentElement.lang = savedLanguage;
+                document.documentElement.dir = savedLanguage === 'ar' ? 'rtl' : 'ltr';
+            })();
+        </script>
     </head>
     <body class="bg-auth-overlay min-h-screen flex items-center justify-center p-4">
         <div class="w-full max-w-md bg-white/95 auth-card rounded-[2.5rem] shadow-2xl border border-white/60 p-8 md:p-12 relative overflow-hidden">
@@ -173,14 +183,6 @@
                 return '';
             }
 
-            function validatePass(val) {
-                if (!/^\d+$/.test(val) && val.length > 0) {
-                    return 'كلمة المرور يجب أن تحتوي على أرقام فقط';
-                }
-
-                return '';
-            }
-
             function liveValidate(input, errEl, validateFn) {
                 input.addEventListener('input', () => {
                     if (!input.value) {
@@ -207,7 +209,6 @@
             }
 
             liveValidate(document.getElementById('login-email'), document.getElementById('login-email-err'), validateEmail);
-            liveValidate(document.getElementById('login-pass'), document.getElementById('login-pass-err'), validatePass);
         </script>
     </body>
 </html>

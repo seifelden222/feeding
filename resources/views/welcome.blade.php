@@ -99,7 +99,7 @@
                             <span class="font-semibold text-slate-700 dark:text-slate-300">نتائج ملموسة ومستدامة</span>
                         </li>
                     </ul>
-                    <a class="inline-flex items-center gap-2 text-primary font-bold hover:underline transition-all" href="aboutus.html">
+                    <a class="inline-flex items-center gap-2 text-primary font-bold hover:underline transition-all" href="{{ route('aboutus') }}">
                         اقرأ المزيد عن منهجيتنا
                         <span class="material-symbols-outlined">arrow_back</span>
                     </a>
@@ -120,7 +120,7 @@
                     </div>
                     <h3 class="text-2xl font-bold mb-4 dark:text-white">خطط وجبات مخصصة</h3>
                     <p class="text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">جداول غذائية مرنة ومحسوبة السعرات تناسب ذوقك واحتياجاتك اليومية.</p>
-                    <a class="text-primary font-bold flex items-center gap-1 group-hover:gap-2 transition-all" href="services.html">اكتشف المزيد <span class="material-symbols-outlined">chevron_left</span></a>
+                    <a class="text-primary font-bold flex items-center gap-1 group-hover:gap-2 transition-all" href="{{ route('services') }}">اكتشف المزيد <span class="material-symbols-outlined">chevron_left</span></a>
                 </div>
                 <div class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] shadow-sm hover:shadow-xl transition-all group border border-gray-100 dark:border-gray-700">
                     <div class="w-14 h-14 bg-emerald-50 dark:bg-emerald-900/30 text-primary rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-all">
@@ -128,7 +128,7 @@
                     </div>
                     <h3 class="text-2xl font-bold mb-4 dark:text-white">برامج خسارة الوزن</h3>
                     <p class="text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">فقدان الوزن بطريقة صحية دون حرمان، مع التركيز على حرق الدهون وبناء العادات.</p>
-                    <a class="text-primary font-bold flex items-center gap-1 group-hover:gap-2 transition-all" href="services.html">اكتشف المزيد <span class="material-symbols-outlined">chevron_left</span></a>
+                    <a class="text-primary font-bold flex items-center gap-1 group-hover:gap-2 transition-all" href="{{ route('services') }}">اكتشف المزيد <span class="material-symbols-outlined">chevron_left</span></a>
                 </div>
                 <div class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] shadow-sm hover:shadow-xl transition-all group border border-gray-100 dark:border-gray-700">
                     <div class="w-14 h-14 bg-emerald-50 dark:bg-emerald-900/30 text-primary rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-all">
@@ -136,7 +136,7 @@
                     </div>
                     <h3 class="text-2xl font-bold mb-4 dark:text-white">بناء العضلات</h3>
                     <p class="text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">تغذية رياضية متقدمة لزيادة الكتلة العضلية وتحسين الأداء الرياضي العام.</p>
-                    <a class="text-primary font-bold flex items-center gap-1 group-hover:gap-2 transition-all" href="services.html">اكتشف المزيد <span class="material-symbols-outlined">chevron_left</span></a>
+                    <a class="text-primary font-bold flex items-center gap-1 group-hover:gap-2 transition-all" href="{{ route('services') }}">اكتشف المزيد <span class="material-symbols-outlined">chevron_left</span></a>
                 </div>
                 <div class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] shadow-sm hover:shadow-xl transition-all group border border-gray-100 dark:border-gray-700">
                     <div class="w-14 h-14 bg-emerald-50 dark:bg-emerald-900/30 text-primary rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-all">
@@ -144,7 +144,7 @@
                     </div>
                     <h3 class="text-2xl font-bold mb-4 dark:text-white">التغذية العلاجية</h3>
                     <p class="text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">إدارة الحالات الصحية مثل السكري والضغط من خلال أنظمة غذائية طبية متخصصة.</p>
-                    <a class="text-primary font-bold flex items-center gap-1 group-hover:gap-2 transition-all" href="services.html">اكتشف المزيد <span class="material-symbols-outlined">chevron_left</span></a>
+                    <a class="text-primary font-bold flex items-center gap-1 group-hover:gap-2 transition-all" href="{{ route('services') }}">اكتشف المزيد <span class="material-symbols-outlined">chevron_left</span></a>
                 </div>
                 <div class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] shadow-sm hover:shadow-xl transition-all group border border-gray-100 dark:border-gray-700">
                     <div class="w-14 h-14 bg-emerald-50 dark:bg-emerald-900/30 text-primary rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-all">
@@ -152,7 +152,7 @@
                     </div>
                     <h3 class="text-2xl font-bold mb-4 dark:text-white">متابعة أونلاين</h3>
                     <p class="text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">تواصل مباشر وجلسات استشارية من أي مكان في العالم عبر تطبيقاتنا الرقمية.</p>
-                    <a class="text-primary font-bold flex items-center gap-1 group-hover:gap-2 transition-all" href="services.html">اكتشف المزيد <span class="material-symbols-outlined">chevron_left</span></a>
+                    <a class="text-primary font-bold flex items-center gap-1 group-hover:gap-2 transition-all" href="{{ route('services') }}">اكتشف المزيد <span class="material-symbols-outlined">chevron_left</span></a>
                 </div>
             </div>
         </div>
@@ -244,7 +244,7 @@
                     <h2 class="text-4xl font-black mb-4 dark:text-white">أحدث المقالات والنصائح</h2>
                     <p class="text-lg text-slate-500 dark:text-slate-400">ابقِ على اطلاع بأحدث المعلومات الغذائية من خبراء NutriZone</p>
                 </div>
-                <a class="hidden md:flex items-center gap-2 text-primary font-bold border-b-2 border-primary pb-1" href="articles.html">مشاهدة كل المقالات</a>
+                <a class="hidden md:flex items-center gap-2 text-primary font-bold border-b-2 border-primary pb-1" href="{{ route('articles') }}">مشاهدة كل المقالات</a>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div class="group cursor-pointer">
@@ -284,7 +284,7 @@
                     انضم إلى آلاف الأشخاص الذين غيروا حياتهم للأفضل من خلال برامجنا الغذائية المتكاملة في NutriZone.
                 </p>
                 <button class="bg-slate-900 hover:bg-black text-white px-12 py-5 rounded-2xl font-black text-xl transition-all shadow-2xl">
-                    <a href="login.html"> احجز استشارتك الآن</a>
+                    <a href="{{ route('login') }}"> احجز استشارتك الآن</a>
                 </button>
             </div>
         </div>
@@ -309,10 +309,10 @@
                 <div>
                     <h5 class="text-white font-black text-xl mb-8">روابط سريعة</h5>
                     <ul class="space-y-4">
-                        <li><a class="hover:text-primary transition-colors" href="index.html">الرئيسية</a></li>
-                        <li><a class="hover:text-primary transition-colors" href="aboutus.html">من نحن</a></li>
-                        <li><a class="hover:text-primary transition-colors" href="services.html">خدماتنا</a></li>
-                        <li><a class="hover:text-primary transition-colors" href="contactus.html">اتصل بنا</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="{{ url('/') }}">الرئيسية</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="{{ route('aboutus') }}">من نحن</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="{{ route('services') }}">خدماتنا</a></li>
+                        <li><a class="hover:text-primary transition-colors" href="{{ route('contactus') }}">اتصل بنا</a></li>
                     </ul>
                 </div>
                 <div>
@@ -372,7 +372,7 @@
         </div>
         <h3 id="modal-service-title" class="text-2xl font-black mb-3 dark:text-white"></h3>
         <p id="modal-service-desc" class="text-slate-600 dark:text-slate-400 leading-relaxed mb-6"></p>
-        <a href="services.html" class="inline-block bg-primary hover:bg-emerald-600 text-white px-6 py-3 rounded-full font-bold transition-all">اكتشف المزيد</a>
+        <a href="{{ route('services') }}" class="inline-block bg-primary hover:bg-emerald-600 text-white px-6 py-3 rounded-full font-bold transition-all">اكتشف المزيد</a>
     </div>
 
     <!-- Map Modal -->
