@@ -146,6 +146,31 @@
                 <div class="space-y-8">
                     <section class="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
                         <div class="mb-6 flex items-center gap-3">
+                            <span class="material-symbols-outlined text-primary">tune</span>
+                            <h2 class="text-xl font-black">الخصائص</h2>
+                        </div>
+
+                        <div class="space-y-5">
+                            <div>
+                                <label class="mb-2 block text-sm font-bold">اللغة</label>
+                                <select id="languageSelect" class="w-full rounded-2xl border-slate-200 bg-slate-50 px-4 py-3 focus:border-primary focus:ring-primary dark:border-slate-700 dark:bg-slate-800">
+                                    <option value="ar">العربية</option>
+                                    <option value="en">English</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="mb-2 block text-sm font-bold">وضع العرض</label>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <button class="appearance-toggle rounded-2xl border border-slate-200 px-4 py-3 text-sm font-black transition dark:border-slate-700" data-theme="light" type="button">فاتح</button>
+                                    <button class="appearance-toggle rounded-2xl border border-slate-200 px-4 py-3 text-sm font-black transition dark:border-slate-700" data-theme="dark" type="button">داكن</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                        <div class="mb-6 flex items-center gap-3">
                             <span class="material-symbols-outlined text-primary">payments</span>
                             <h2 class="text-xl font-black">الحسابات للأدمن</h2>
                         </div>
@@ -157,7 +182,7 @@
                             </div>
 
                             <button class="w-full rounded-2xl border border-primary px-4 py-3 font-black text-primary transition hover:bg-primary hover:text-white" type="button">
-                                تعديل صفحة الأرباح
+                                تعديل الأرباح
                             </button>
                         </div>
                     </section>
@@ -183,6 +208,46 @@
             </div>
         </main>
     </div>
+
+    <script>
+        const root = document.documentElement;
+        const languageSelect = document.getElementById('languageSelect');
+        const appearanceButtons = document.querySelectorAll('.appearance-toggle');
+
+        const savedLanguage = localStorage.getItem('nutrizone-language') || 'ar';
+        const savedTheme = localStorage.getItem('nutrizone-theme') || 'light';
+
+        root.classList.toggle('dark', savedTheme === 'dark');
+        root.lang = savedLanguage;
+        root.dir = savedLanguage === 'ar' ? 'rtl' : 'ltr';
+        languageSelect.value = savedLanguage;
+
+        const paintThemeButtons = (theme) => {
+            appearanceButtons.forEach((button) => {
+                const isActive = button.dataset.theme === theme;
+                button.classList.toggle('bg-primary', isActive);
+                button.classList.toggle('text-white', isActive);
+                button.classList.toggle('border-primary', isActive);
+            });
+        };
+
+        paintThemeButtons(savedTheme);
+
+        languageSelect?.addEventListener('change', () => {
+            localStorage.setItem('nutrizone-language', languageSelect.value);
+            root.lang = languageSelect.value;
+            root.dir = languageSelect.value === 'ar' ? 'rtl' : 'ltr';
+        });
+
+        appearanceButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+                const theme = button.dataset.theme;
+                localStorage.setItem('nutrizone-theme', theme);
+                root.classList.toggle('dark', theme === 'dark');
+                paintThemeButtons(theme);
+            });
+        });
+    </script>
 </body>
 
 </html>

@@ -377,6 +377,9 @@
     </main>
   </div>
   <script>
+    const finalPlanKey = 'nutrizone-final-plans';
+    const planDraftKey = 'nutrizone-plan-draft';
+
     // Search on actual trainee cards in sidebar
     const planSearch = document.getElementById('planSearch');
     const planSearchPopup = document.getElementById('planSearchPopup');
@@ -445,8 +448,60 @@
       });
     });
 
-    const finalPlanKey = 'nutrizone-final-plans';
     const summaryValues = document.querySelectorAll('.mt-12 .text-2xl.font-black');
+
+    function serializePlan() {
+      return [...document.querySelectorAll('.space-y-6 > div')].map((section) => ({
+        title: section.querySelector('h4')?.textContent.trim() || '',
+        values: [...section.querySelectorAll('input')].map((input) => ({
+          placeholder: input.placeholder || '',
+          type: input.type,
+          value: input.value,
+        })),
+      })).filter((section) => section.title);
+    }
+
+    function persistDraft() {
+      localStorage.setItem(planDraftKey, JSON.stringify(serializePlan()));
+    }
+
+    function hydrateSectionInputs(section, values) {
+      const inputs = section.querySelectorAll('input');
+      values.forEach((value, index) => {
+        if (!inputs[index]) {
+          return;
+        }
+
+        inputs[index].value = value.value || '';
+      });
+    }
+
+    function attachDynamicListeners(scope = document) {
+      scope.querySelectorAll('input').forEach((input) => {
+        input.addEventListener('input', () => {
+          refreshPlanSummary();
+          persistDraft();
+        });
+      });
+    }
+
+    function restoreDraft() {
+      const sections = JSON.parse(localStorage.getItem(planDraftKey) || '[]');
+
+      if (!sections.length) {
+        return;
+      }
+
+      const existingSections = [...document.querySelectorAll('.space-y-6 > div')];
+
+      sections.forEach((savedSection, index) => {
+        const existingSection = existingSections[index];
+
+        if (existingSection) {
+          hydrateSectionInputs(existingSection, savedSection.values);
+        }
+      });
+    }
 
     function refreshPlanSummary() {
       let calories = 0;
@@ -507,6 +562,8 @@
       </div>
     </div>`;
       mealsContainer.appendChild(newDay);
+      attachDynamicListeners(newDay);
+      persistDraft();
       newDay.scrollIntoView({
         behavior: 'smooth',
         block: 'center'
@@ -533,12 +590,13 @@
     });
 
     document.getElementById('saveFinalPlanBtn').addEventListener('click', () => {
-      const sections = [...document.querySelectorAll('.space-y-6 > div')].map((section) => ({
-        title: section.querySelector('h4')?.textContent.trim() || '',
-        values: [...section.querySelectorAll('input')].map((input) => input.value).filter(Boolean),
-      })).filter((section) => section.title);
+      const sections = serializePlan().map((section) => ({
+        title: section.title,
+        values: section.values.map((input) => input.value).filter(Boolean),
+      }));
 
       localStorage.setItem(finalPlanKey, JSON.stringify(sections));
+      persistDraft();
       refreshPlanSummary();
       showToast('تم حفظ البيانات النهائية وتحديثها');
     });
@@ -586,6 +644,8 @@
       </button>
     </div>`;
       this.closest('.flex.items-center.justify-center').before(row);
+      attachDynamicListeners(row);
+      persistDraft();
       showToast('تم إضافة وجبة خفيفة');
     });
 
@@ -594,6 +654,7 @@
       if (btn.querySelector('span')?.textContent.trim() === 'delete') {
         btn.addEventListener('click', () => {
           btn.closest('.bg-slate-50, .rounded-2xl')?.remove();
+          persistDraft();
           showToast('تم حذف الوجبة');
         });
       }
@@ -607,7 +668,8 @@
             newRow.querySelectorAll('input').forEach(i => i.value = '');
             row.after(newRow);
             showToast('تم إضافة وجبة جديدة');
-            newRow.querySelectorAll('input').forEach((input) => input.addEventListener('input', refreshPlanSummary));
+            attachDynamicListeners(newRow);
+            persistDraft();
           }
         });
       }
@@ -626,7 +688,8 @@
     saveModal.addEventListener('click', (e) => {
       if (e.target === saveModal) saveModal.classList.add('hidden');
     });
-    document.querySelectorAll('input').forEach((input) => input.addEventListener('input', refreshPlanSummary));
+    attachDynamicListeners();
+    restoreDraft();
     refreshPlanSummary();
   </script>
 </body>

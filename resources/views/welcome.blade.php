@@ -293,7 +293,7 @@
         <div class="container mx-auto px-6">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
                 <div class="col-span-1">
-                    <img src="logo.png" alt="" style="width: 250px;">
+                    <img src="{{ asset('img/logo.png') }}" alt="NutriZone" style="width: 250px;">
                     <p class="leading-relaxed mb-8 opacity-70">
                         تمكين الأفراد في مصر من عيش حياة أكثر صحة وسعادة من خلال التوعية الغذائية والبرامج المتخصصة المبنية على العلم.
                     </p>
@@ -316,7 +316,7 @@
                     </ul>
                 </div>
                 <div>
-                    <h5 class="text-white font-black text-xl mb-8">خدماتنا</h5>
+                    <h5 class="text-white font-black text-xl mb-8"><a href="mailto:info@nutrizone.com.eg" class="hover:text-primary transition-colors">خدماتنا</a></h5>
                     <ul class="space-y-4">
                         <li><button onclick="openServiceModal(1)" class="hover:text-primary transition-colors cursor-pointer text-right">خسارة الوزن</button></li>
                         <li><button onclick="openServiceModal(2)" class="hover:text-primary transition-colors cursor-pointer text-right">بناء العضلات</button></li>

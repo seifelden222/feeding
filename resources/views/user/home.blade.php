@@ -1,5 +1,9 @@
 <!DOCTYPE html>
 
+@php
+    $user = auth()->user();
+@endphp
+
 <html class="light" dir="rtl" lang="ar">
 
 <head>
@@ -58,6 +62,16 @@
             display: none;
         }
     </style>
+    <script>
+        (() => {
+            const savedTheme = localStorage.getItem('nutrizone-theme') || 'light';
+            const savedLanguage = localStorage.getItem('nutrizone-language') || 'ar';
+
+            document.documentElement.classList.toggle('dark', savedTheme === 'dark');
+            document.documentElement.lang = savedLanguage;
+            document.documentElement.dir = savedLanguage === 'ar' ? 'rtl' : 'ltr';
+        })();
+    </script>
 </head>
 
 <body
@@ -72,7 +86,7 @@
             <!-- Top Header / Search -->
             <header class="flex items-center justify-between mb-8">
                 <div>
-                    <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white">أهلاً بك، أحمد! 👋</h1>
+                    <h1 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white">أهلاً بك، {{ $user?->name }}! 👋</h1>
                     <p class="text-slate-500 dark:text-slate-400 mt-1">دعنا نرى تقدمك اليوم.</p>
                 </div>
                 <div class="flex items-center gap-4">
@@ -170,54 +184,58 @@
                 <div class="lg:col-span-2 space-y-6">
                     <div class="flex items-center justify-between">
                         <h3 class="text-xl font-bold dark:text-white">وجبات اليوم</h3>
-                        <span class="text-primary text-sm font-bold cursor-pointer">تعديل الخطة</span>
+                        <a class="text-primary text-sm font-bold cursor-pointer" href="{{ route('user.plans') }}">تعديل الخطة</a>
                     </div>
                     <!-- Breakfast -->
                     <div
+                        data-dashboard-meal="breakfast"
                         class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border border-gray-50 dark:border-gray-700 flex items-center gap-6 group hover:border-primary transition-colors">
                         <div class="w-20 h-20 rounded-xl overflow-hidden bg-slate-100">
                             <img alt="Breakfast" class="w-full h-full object-cover"
-                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrviULtiwm-ISoV3bBaV9hKHwvSLf07mB36MfFMFCBBky6vZ0roBHwcRIEnfbdxL2uJM7XkX3rIFXWxik8HcjtmZM_wG3GQKoUgqSOv5MtoSLTguQi67ubVVXaB_3LPzQmQ1DSQnQlkcmgpW94JGAlaAOxqkeE0r41N7GtredoDerMj3Ptv98cRvJRkAOCvEqooZAy1XBl-MKJ4gxfBWoTURWPtkuLsqmz-GoRSCrT73M8Zm9dZtBuitqU4s4lxrDaxF0cAp3hMc66" />
+                                src="{{ asset('img/Low-fat-diet-WP-image-.jpg') }}" />
                         </div>
                         <div class="flex-1">
                             <span
                                 class="text-xs font-bold text-primary bg-emerald-50 dark:bg-emerald-900/30 px-2 py-0.5 rounded-md mb-1 inline-block">الإفطار</span>
-                            <h4 class="font-bold dark:text-white">شوفان بالحليب والمكسرات</h4>
-                            <p class="text-sm text-slate-500">350 سعرة حرارية • حبات كاملة</p>
+                            <h4 class="meal-name font-bold dark:text-white">أومليت خضار مع خبز شوفان</h4>
+                            <p class="meal-meta text-sm text-slate-500">450 سعرة حرارية • جاهزة لليوم الحالي</p>
                         </div>
                         <div class="flex items-center gap-2">
-                            <span class="material-symbols-outlined text-emerald-500">check_circle</span>
+                            <span class="meal-icon material-symbols-outlined text-slate-400">schedule</span>
                         </div>
                     </div>
                     <!-- Lunch -->
                     <div
+                        data-dashboard-meal="lunch"
                         class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border border-gray-50 dark:border-gray-700 flex items-center gap-6 group hover:border-primary transition-colors">
                         <div class="w-20 h-20 rounded-xl overflow-hidden bg-slate-100">
                             <img alt="Lunch" class="w-full h-full object-cover"
-                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCUhxluD45ogUOS-vsrq8McN9KV7jW91DvYc5zVXEBzuaONfY94CULfFpnFs9tGpF8xYi-iyQHo1moK0FHSFYk-qJAA8g0c6DqaFtz11XAllI9Qpf2hHDHDOUoYR-kPYVn1nR5q1kfXyyNOopHFjPFe5Pj6BUd2chEP2d3bUmp9U5bR0SkGXbaCGgYs1n6dIHZBnOnHvoqZWtSGI-HPIpqxUB4WtrQEKBRSmMWaZlyS4S1su-A2rPxH8Vfi6S0DW_FGv7jWlT65pJ6" />
+                                src="{{ asset('img/Low-fat-diet-WP-image-.jpg') }}" />
                         </div>
                         <div class="flex-1">
                             <span
                                 class="text-xs font-bold text-blue-500 bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded-md mb-1 inline-block">الغداء</span>
-                            <h4 class="font-bold dark:text-white">صدر دجاج مشوي مع رز أسمر</h4>
-                            <p class="text-sm text-slate-500">550 سعرة حرارية • عالي البروتين</p>
+                            <h4 class="meal-name font-bold dark:text-white">دجاج مشوي مع أرز وخضار</h4>
+                            <p class="meal-meta text-sm text-slate-500">620 سعرة حرارية • جاهزة لليوم الحالي</p>
                         </div>
                         <div class="flex items-center gap-2">
-                            <span class="material-symbols-outlined text-emerald-500">check_circle</span>
+                            <span class="meal-icon material-symbols-outlined text-slate-400">schedule</span>
                         </div>
                     </div>
                     <!-- Dinner -->
                     <div
+                        data-dashboard-meal="dinner"
                         class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border border-gray-50 dark:border-gray-700 flex items-center gap-6 group border-dashed border-2">
                         <div
                             class="w-20 h-20 rounded-xl overflow-hidden bg-slate-100 flex items-center justify-center">
-                            <span class="material-symbols-outlined text-slate-300 text-4xl">restaurant</span>
+                            <img alt="Dinner" class="h-full w-full object-cover"
+                                src="{{ asset('img/Low-fat-diet-WP-image-.jpg') }}" />
                         </div>
                         <div class="flex-1">
                             <span
                                 class="text-xs font-bold text-amber-500 bg-amber-50 dark:bg-amber-900/30 px-2 py-0.5 rounded-md mb-1 inline-block">العشاء</span>
-                            <h4 class="font-bold text-slate-400">سلطة التونة بالخضار</h4>
-                            <p class="text-sm text-slate-400">300 سعرة حرارية (لم يتم التناول بعد)</p>
+                            <h4 class="meal-name font-bold dark:text-white">زبادي يوناني مع فاكهة ومكسرات</h4>
+                            <p class="meal-meta text-sm text-slate-500">320 سعرة حرارية • جاهزة لليوم الحالي</p>
                         </div>
                         <button
                             class="bg-slate-100 dark:bg-gray-700 text-slate-600 dark:text-slate-300 p-2 rounded-lg">
@@ -328,15 +346,40 @@
     </div>
 
     <script data-purpose="ui-interactivity">
-        // Theme Toggle
+        const defaultMeals = {
+            breakfast: {
+                name: 'أومليت خضار مع خبز شوفان',
+                calories: '450',
+            },
+            lunch: {
+                name: 'دجاج مشوي مع أرز وخضار',
+                calories: '620',
+            },
+            dinner: {
+                name: 'زبادي يوناني مع فاكهة ومكسرات',
+                calories: '320',
+            },
+        };
         const toggleBtn = document.getElementById('theme-toggle');
         const html = document.documentElement;
+        const savedTheme = localStorage.getItem('nutrizone-theme') || 'light';
+        const savedLanguage = localStorage.getItem('nutrizone-language') || 'ar';
+        html.classList.toggle('dark', savedTheme === 'dark');
+        html.lang = savedLanguage;
+        html.dir = savedLanguage === 'ar' ? 'rtl' : 'ltr';
+        toggleBtn.innerHTML = savedTheme === 'dark'
+            ? '<span class="material-symbols-outlined">light_mode</span>'
+            : '<span class="material-symbols-outlined">dark_mode</span>';
+
+        // Theme Toggle
         toggleBtn.addEventListener('click', () => {
             if (html.classList.contains('dark')) {
                 html.classList.remove('dark');
+                localStorage.setItem('nutrizone-theme', 'light');
                 toggleBtn.innerHTML = '<span class="material-symbols-outlined">dark_mode</span>';
             } else {
                 html.classList.add('dark');
+                localStorage.setItem('nutrizone-theme', 'dark');
                 toggleBtn.innerHTML = '<span class="material-symbols-outlined">light_mode</span>';
             }
         });
@@ -386,9 +429,45 @@
             });
         }
 
-        // Edit plan
-        document.querySelectorAll('span.text-primary.text-sm.font-bold.cursor-pointer').forEach(el => {
-            el.addEventListener('click', () => showToast('سيتم توجيهك لصفحة تعديل الخطة'));
+        function syncDashboardMeals() {
+            const mealState = JSON.parse(localStorage.getItem('nutrizone-daily-meals') || '{}');
+            const activeDay = mealState.activeDay ?? '1';
+            const currentDayState = mealState[activeDay] || {};
+
+            document.querySelectorAll('[data-dashboard-meal]').forEach((card) => {
+                const mealKey = card.dataset.dashboardMeal;
+                const savedMeal = defaultMeals[mealKey];
+                const mealName = card.querySelector('.meal-name');
+                const mealMeta = card.querySelector('.meal-meta');
+                const mealIcon = card.querySelector('.meal-icon');
+                const status = currentDayState[mealKey];
+
+                if (mealName) {
+                    mealName.textContent = savedMeal.name;
+                }
+
+                if (mealMeta) {
+                    if (status === 'done') {
+                        mealMeta.textContent = `${savedMeal.calories} سعرة حرارية • تم تناول الوجبة`;
+                    } else if (status === 'saved') {
+                        mealMeta.textContent = `${savedMeal.calories} سعرة حرارية • تم حفظ الوجبة`;
+                    } else {
+                        mealMeta.textContent = `${savedMeal.calories} سعرة حرارية • جاهزة لليوم الحالي`;
+                    }
+                }
+
+                if (mealIcon) {
+                    mealIcon.textContent = status === 'done' ? 'check_circle' : 'schedule';
+                    mealIcon.classList.toggle('text-emerald-500', status === 'done');
+                    mealIcon.classList.toggle('text-slate-400', status !== 'done');
+                }
+            });
+        }
+
+        document.querySelectorAll('a.text-primary.text-sm.font-bold.cursor-pointer').forEach(el => {
+            el.addEventListener('click', () => {
+                syncDashboardMeals();
+            });
         });
 
         // Add meal buttons
@@ -407,6 +486,8 @@
             document.body.appendChild(t);
             setTimeout(() => t.remove(), 3000);
         }
+
+        syncDashboardMeals();
     </script>
 </body>
 

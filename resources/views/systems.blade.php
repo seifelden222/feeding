@@ -54,7 +54,7 @@
 <body class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200">
   <header class="fixed w-full z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-100 dark:border-gray-800">
     <div class="container mx-auto px-6 py-4 flex items-center justify-between">
-      <img src="logo.png" alt="NutriZone" style="width: 150px;">
+      <img src="{{ asset('img/logo.png') }}" alt="NutriZone" style="width: 150px;">
       <nav class="hidden md:flex items-center gap-8">
         <a class="font-medium hover:text-primary transition-colors" href="{{url('/')}}">الرئيسية</a>
         <a class="font-medium hover:text-primary transition-colors" href="{{url('aboutus')}}">من نحن</a>
@@ -281,7 +281,7 @@
     <div class="container mx-auto px-6">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
         <div class="col-span-1">
-          <img src="logo.png" alt="NutriZone" style="width: 250px;" class="mb-8">
+          <img src="{{ asset('img/logo.png') }}" alt="NutriZone" style="width: 250px;" class="mb-8">
           <p class="leading-relaxed mb-8 opacity-70">
             تمكين الأفراد في مصر من عيش حياة أكثر صحة وسعادة من خلال التوعية الغذائية والبرامج المتخصصة المبنية على العلم.
           </p>
@@ -304,7 +304,7 @@
           </ul>
         </div>
         <div>
-          <h5 class="text-white font-black text-xl mb-8">خدماتنا</h5>
+          <h5 class="text-white font-black text-xl mb-8"><a href="mailto:info@nutrizone.com.eg" class="hover:text-primary transition-colors">خدماتنا</a></h5>
           <ul class="space-y-4">
             <li><button onclick="openServiceModal(1)" class="hover:text-primary transition-colors cursor-pointer text-right">خسارة الوزن</button></li>
             <li><button onclick="openServiceModal(2)" class="hover:text-primary transition-colors cursor-pointer text-right">بناء العضلات</button></li>

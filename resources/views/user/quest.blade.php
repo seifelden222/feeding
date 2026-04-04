@@ -1,5 +1,9 @@
 <!DOCTYPE html>
 
+@php
+    $user = auth()->user();
+@endphp
+
 <html dir="rtl" lang="ar">
 
 <head>
@@ -61,7 +65,7 @@
             <header
                 class="h-20 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-8 sticky top-0 z-10">
                 <div class="flex flex-col">
-                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">مرحباً، أحمد 👋</h2>
+                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">مرحباً، {{ $user?->name }} 👋</h2>
                     <p class="text-sm text-slate-500">اليوم هو ١٢ أكتوبر، 2026</p>
                 </div>
                 <div class="flex items-center gap-4">
@@ -376,10 +380,12 @@
             <p class="text-sm text-slate-500 mb-4" id="book-expert-name">د. سارة أحمد</p>
             <div class="space-y-3">
                 <div><label class="text-sm text-slate-500">التاريخ</label><input type="date"
+                        id="booking-date"
                         class="w-full mt-1 bg-slate-50 dark:bg-slate-800 border-none rounded-xl px-4 py-2 focus:ring-2 focus:ring-primary" />
                 </div>
                 <div><label class="text-sm text-slate-500">الوقت</label>
                     <select
+                        id="booking-time"
                         class="w-full mt-1 bg-slate-50 dark:bg-slate-800 border-none rounded-xl px-4 py-2 focus:ring-2 focus:ring-primary">
                         <option>10:00 صباحاً</option>
                         <option>12:00 ظهراً</option>
@@ -389,6 +395,7 @@
                 </div>
                 <div><label class="text-sm text-slate-500">نوع الاستشارة</label>
                     <select
+                        id="booking-type"
                         class="w-full mt-1 bg-slate-50 dark:bg-slate-800 border-none rounded-xl px-4 py-2 focus:ring-2 focus:ring-primary">
                         <option>استشارة فيديو</option>
                         <option>محادثة نصية</option>
@@ -484,6 +491,13 @@
     </div>
 
     <script>
+        const html = document.documentElement;
+        const savedTheme = localStorage.getItem('nutrizone-theme') || 'light';
+        const savedLanguage = localStorage.getItem('nutrizone-language') || 'ar';
+        html.classList.toggle('dark', savedTheme === 'dark');
+        html.lang = savedLanguage;
+        html.dir = savedLanguage === 'ar' ? 'rtl' : 'ltr';
+
         const bookingsKey = 'nutrizone-bookings';
 
         function showToast(msg) {
@@ -547,10 +561,16 @@
         }
 
         function confirmBook() {
-            const modal = document.getElementById('book-modal');
-            const dateInput = modal.querySelector('input[type="date"]');
-            const selects = modal.querySelectorAll('select');
-            const selectedDate = dateInput.value ? new Date(dateInput.value) : new Date();
+            const dateInput = document.getElementById('booking-date');
+            const timeSelect = document.getElementById('booking-time');
+            const typeSelect = document.getElementById('booking-type');
+
+            if (!dateInput.value) {
+                showToast('اختر تاريخ الاستشارة أولاً');
+                return;
+            }
+
+            const selectedDate = new Date(dateInput.value);
             const currentBookings = JSON.parse(localStorage.getItem(bookingsKey) || '[]');
 
             currentBookings.unshift({
@@ -560,12 +580,13 @@
                 month: selectedDate.toLocaleDateString('ar-EG', {
                     month: 'long',
                 }),
-                time: selects[0].value,
-                type: selects[1].value,
+                time: timeSelect.value,
+                type: typeSelect.value,
             });
 
             localStorage.setItem(bookingsKey, JSON.stringify(currentBookings));
             document.getElementById('book-modal').classList.add('hidden');
+            dateInput.value = '';
             showToast('تم تأكيد الحجز بنجاح ✓');
             renderBookings();
         }

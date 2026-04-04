@@ -48,7 +48,7 @@
                     <p class="text-slate-500 dark:text-slate-300">تعديل الاسم والإيميل، تغيير كلمة المرور، وضبط اللغة والمظهر من الخصائص.</p>
                 </div>
 
-                <div class="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                <div class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-left shadow-sm dark:border-slate-800 dark:bg-slate-900">
                     <p class="text-sm font-black">{{ $user?->name }}</p>
                     <p class="text-xs text-slate-500">{{ $user?->email }}</p>
                 </div>

@@ -1,5 +1,9 @@
 <!DOCTYPE html>
 
+@php
+    $user = auth()->user();
+@endphp
+
 <html class="light" dir="rtl" lang="ar">
 
 <head>
@@ -57,7 +61,7 @@
             <header
                 class="h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-8 flex items-center justify-between sticky top-0 z-10">
                 <div class="flex items-center gap-4">
-                    <h2 class="text-xl font-bold">مرحباً، أحمد منصور</h2>
+                    <h2 class="text-xl font-bold">مرحباً، {{ $user?->name }}</h2>
                 </div>
                 <div class="flex items-center gap-4">
                     <button
@@ -363,6 +367,13 @@
     </div>
 
     <script>
+        const html = document.documentElement;
+        const savedTheme = localStorage.getItem('nutrizone-theme') || 'light';
+        const savedLanguage = localStorage.getItem('nutrizone-language') || 'ar';
+        html.classList.toggle('dark', savedTheme === 'dark');
+        html.lang = savedLanguage;
+        html.dir = savedLanguage === 'ar' ? 'rtl' : 'ltr';
+
         function showToast(msg) {
             const t = document.createElement('div');
             t.className =

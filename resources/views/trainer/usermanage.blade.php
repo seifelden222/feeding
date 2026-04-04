@@ -44,23 +44,8 @@
                     <p class="mt-2 text-slate-500 dark:text-slate-400">إضافة مستخدمين جدد وتعديل الاسم والبريد ونوع الحساب وكلمة المرور من نفس الصفحة.</p>
                 </div>
 
-                <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                    <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                        <p class="text-xs text-slate-500">إجمالي الحسابات</p>
-                        <p class="mt-2 text-2xl font-black">{{ $managedUsers->count() }}</p>
-                    </div>
-                    <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                        <p class="text-xs text-slate-500">المستخدمون</p>
-                        <p class="mt-2 text-2xl font-black">{{ $managedUsers->where('role', 'user')->count() }}</p>
-                    </div>
-                    <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                        <p class="text-xs text-slate-500">المديرون/المدربون</p>
-                        <p class="mt-2 text-2xl font-black">{{ $managedUsers->where('role', 'trainer')->count() }}</p>
-                    </div>
-                    <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                        <p class="text-xs text-slate-500">الحسابات النشطة</p>
-                        <p class="mt-2 text-2xl font-black">{{ $managedUsers->where('status', 'active')->count() }}</p>
-                    </div>
+                <div class="rounded-2xl border border-slate-200 bg-white px-5 py-4 text-sm font-bold text-slate-600 shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
+                    عدد المستخدمين المتاحين حالياً: {{ $managedUsers->count() }}
                 </div>
             </header>
 
@@ -215,9 +200,14 @@
                                     آخر تحديث: {{ optional($managedUser->updated_at)->format('Y-m-d H:i') }}
                                 </div>
 
-                                <button class="rounded-2xl bg-primary px-5 py-3 text-sm font-black text-white transition hover:bg-emerald-600" type="submit">
-                                    حفظ التعديلات
-                                </button>
+                                <div class="flex items-center gap-3">
+                                    <a class="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-black text-slate-600 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800" href="{{ route('trainer.messages') }}">
+                                        مراسلة المتدرب
+                                    </a>
+                                    <button class="rounded-2xl bg-primary px-5 py-3 text-sm font-black text-white transition hover:bg-emerald-600" type="submit">
+                                        حفظ التعديلات
+                                    </button>
+                                </div>
                             </div>
                         </form>
                     @endforeach
