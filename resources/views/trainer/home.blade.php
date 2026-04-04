@@ -53,9 +53,7 @@
     <main class="flex-1 flex flex-col overflow-y-auto bg-background-light dark:bg-background-dark">
       <!-- Header -->
       <header class="flex items-center justify-between px-8 py-5 bg-white dark:bg-background-dark/50 backdrop-blur-md sticky top-0 z-10 border-b border-slate-200 dark:border-slate-800">
-        <div class="flex items-center gap-4">
-          <h2 class="text-2xl font-bold">مرحباً كابتن سامر 👋</h2>
-        </div>
+
         <div class="flex items-center gap-4">
           <div class="relative">
             <span class="material-symbols-outlined absolute right-3 top-2.5 text-slate-400">search</span>

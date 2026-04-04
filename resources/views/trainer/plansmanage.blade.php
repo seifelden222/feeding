@@ -47,7 +47,7 @@
 <body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100">
   <div class="flex h-screen overflow-hidden">
     <!-- Sidebar Navigation -->
-   
+
     <x-trainer-slider />
 
     <!-- Main Content Area -->
@@ -329,23 +329,6 @@
                   </div>
                 </div>
               </div>
-              <!-- Snacks Section -->
-              <div class="bg-slate-50 dark:bg-slate-800/40 rounded-2xl p-6 border border-slate-100 dark:border-slate-800">
-                <div class="flex items-center justify-between mb-4">
-                  <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 flex items-center justify-center">
-                      <span class="material-symbols-outlined">ios</span>
-                    </div>
-                    <h4 class="font-bold text-lg">سناك</h4>
-                  </div>
-                </div>
-                <div class="flex items-center justify-center">
-                  <button id="addSnackBtn" class="text-primary font-bold flex items-center gap-2 hover:underline">
-                    <span class="material-symbols-outlined">add_circle</span>
-                    إضافة وجبة خفيفة
-                  </button>
-                </div>
-              </div>
             </div>
             <!-- Footer Actions -->
             <div class="mt-12 p-6 bg-primary rounded-2xl text-white flex items-center justify-between">
@@ -379,6 +362,10 @@
   <script>
     const finalPlanKey = 'nutrizone-final-plans';
     const planDraftKey = 'nutrizone-plan-draft';
+    const serverDraft = @json($savedDraft ?? []);
+    const draftSaveUrl = '{{ route('trainer.plansmanage.draft.save') }}';
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+    let draftSyncTimeout = null;
 
     // Search on actual trainee cards in sidebar
     const planSearch = document.getElementById('planSearch');
@@ -450,29 +437,90 @@
 
     const summaryValues = document.querySelectorAll('.mt-12 .text-2xl.font-black');
 
+    function getSectionRows(section) {
+      return [...section.children].filter((child) => {
+        return child.classList?.contains('grid') && child.classList?.contains('grid-cols-12');
+      });
+    }
+
+    function serializeInput(input) {
+      return {
+        placeholder: input.placeholder || '',
+        type: input.type,
+        value: input.value,
+      };
+    }
+
     function serializePlan() {
-      return [...document.querySelectorAll('.space-y-6 > div')].map((section) => ({
-        title: section.querySelector('h4')?.textContent.trim() || '',
-        values: [...section.querySelectorAll('input')].map((input) => ({
-          placeholder: input.placeholder || '',
-          type: input.type,
-          value: input.value,
-        })),
-      })).filter((section) => section.title);
+      return [...document.querySelectorAll('.space-y-6 > div')].map((section) => {
+        const title = section.querySelector('h4')?.textContent.trim() || '';
+        const rows = getSectionRows(section).map((row) => ({
+          inputs: [...row.querySelectorAll('input')].map(serializeInput),
+        }));
+
+        const legacyValues = [...section.querySelectorAll('input')].map(serializeInput);
+
+        return {
+          title,
+          rows,
+          values: legacyValues,
+        };
+      }).filter((section) => section.title);
+    }
+
+    function saveDraftToDatabase(payload, options = {}) {
+      fetch(draftSaveUrl, {
+          method: 'POST',
+          keepalive: options.keepalive === true,
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrfToken,
+            'Accept': 'application/json',
+          },
+          body: JSON.stringify({
+            payload
+          }),
+        })
+        .catch(() => {
+          // Ignore transient network errors. LocalStorage remains the fallback source.
+        });
+    }
+
+    function scheduleDraftSync(payload) {
+      clearTimeout(draftSyncTimeout);
+      draftSyncTimeout = setTimeout(() => {
+        saveDraftToDatabase(payload);
+      }, 400);
     }
 
     function persistDraft() {
-      localStorage.setItem(planDraftKey, JSON.stringify(serializePlan()));
+      const payload = serializePlan();
+      localStorage.setItem(planDraftKey, JSON.stringify(payload));
+      scheduleDraftSync(payload);
     }
 
-    function hydrateSectionInputs(section, values) {
-      const inputs = section.querySelectorAll('input');
+    function hydrateRowInputs(row, values) {
+      const inputs = row.querySelectorAll('input');
       values.forEach((value, index) => {
-        if (!inputs[index]) {
+        if (inputs[index]) {
+          inputs[index].value = value.value || '';
+        }
+      });
+    }
+
+    function hydrateSectionInputs(section, savedSection) {
+      const rows = getSectionRows(section);
+      const normalizedRows = savedSection.rows?.length ? savedSection.rows : (savedSection.values?.length ? [{
+        inputs: savedSection.values
+      }] : []);
+
+      normalizedRows.forEach((savedRow, rowIndex) => {
+        const row = rows[rowIndex];
+        if (!row) {
           return;
         }
 
-        inputs[index].value = value.value || '';
+        hydrateRowInputs(row, savedRow.inputs || []);
       });
     }
 
@@ -486,7 +534,10 @@
     }
 
     function restoreDraft() {
-      const sections = JSON.parse(localStorage.getItem(planDraftKey) || '[]');
+      const localDraft = JSON.parse(localStorage.getItem(planDraftKey) || '[]');
+      const hasLocalDraft = Array.isArray(localDraft) && localDraft.length;
+      const hasServerDraft = Array.isArray(serverDraft) && serverDraft.length;
+      const sections = hasLocalDraft ? localDraft : (hasServerDraft ? serverDraft : []);
 
       if (!sections.length) {
         return;
@@ -494,13 +545,36 @@
 
       const existingSections = [...document.querySelectorAll('.space-y-6 > div')];
 
-      sections.forEach((savedSection, index) => {
-        const existingSection = existingSections[index];
+      existingSections.forEach((existingSection, index) => {
+        const title = existingSection.querySelector('h4')?.textContent.trim() || '';
+        const savedSection = sections.find((section) => (section?.title || '').trim() === title) || sections[index];
 
-        if (existingSection) {
-          hydrateSectionInputs(existingSection, savedSection.values);
+        if (!savedSection) {
+          return;
         }
+
+        const normalizedRows = savedSection.rows?.length ? savedSection.rows : (savedSection.values?.length ? [{
+          inputs: savedSection.values
+        }] : []);
+        const savedRowsCount = normalizedRows.length;
+
+        if (savedRowsCount > 1) {
+          const addButton = existingSection.querySelector('.grid.grid-cols-12 button.bg-primary');
+          for (let i = 1; i < savedRowsCount; i++) {
+            if (addButton) {
+              addMealRow(addButton, {
+                silent: true,
+                skipPersist: true,
+                skipSummary: true,
+              });
+            }
+          }
+        }
+
+        hydrateSectionInputs(existingSection, savedSection);
       });
+
+      localStorage.setItem(planDraftKey, JSON.stringify(sections));
     }
 
     function refreshPlanSummary() {
@@ -625,53 +699,84 @@
       document.getElementById('previewModal').classList.remove('hidden');
     });
 
-    // إضافة وجبة خفيفة
-    document.getElementById('addSnackBtn').addEventListener('click', function() {
-      const snackSection = this.closest('.bg-slate-50, .rounded-2xl');
-      if (!snackSection) return;
-      const row = document.createElement('div');
-      row.className = 'mt-3 grid grid-cols-12 gap-4 items-end';
-      row.innerHTML = `
-    <div class="col-span-5"><label class="block text-xs font-bold text-slate-400 mb-1">اسم الوجبة الخفيفة</label>
-      <input class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm px-4 py-2" type="text" placeholder="مثلاً: تفاحة + مكسرات"/></div>
-    <div class="col-span-3"><label class="block text-xs font-bold text-slate-400 mb-1">السعرات</label>
-      <input class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm px-4 py-2" type="number" placeholder="0"/></div>
-    <div class="col-span-4 flex gap-2 items-end">
-      <div class="flex-1"><label class="block text-xs font-bold text-slate-400 mb-1">المكونات</label>
-        <input class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm px-4 py-2" type="text" placeholder="المكونات..."/></div>
-      <button onclick="this.closest('.mt-3').remove();showToast('تم حذف الوجبة الخفيفة')" class="bg-red-100 text-red-500 p-2 rounded-lg shrink-0">
-        <span class="material-symbols-outlined text-sm">delete</span>
-      </button>
-    </div>`;
-      this.closest('.flex.items-center.justify-center').before(row);
-      attachDynamicListeners(row);
-      persistDraft();
-      showToast('تم إضافة وجبة خفيفة');
-    });
+    function addMealRow(addButton, options = {}) {
+      const section = addButton.closest('.space-y-6 > div');
+      if (!section) {
+        return;
+      }
 
-    // Delete existing meal sections
-    document.querySelectorAll('.space-y-6 > div button').forEach(btn => {
-      if (btn.querySelector('span')?.textContent.trim() === 'delete') {
-        btn.addEventListener('click', () => {
-          btn.closest('.bg-slate-50, .rounded-2xl')?.remove();
-          persistDraft();
-          showToast('تم حذف الوجبة');
+      const rows = section.querySelectorAll(':scope > .grid.grid-cols-12');
+      const templateRow = rows[0];
+      const lastRow = rows[rows.length - 1];
+
+      if (!templateRow || !lastRow) {
+        return;
+      }
+
+      const newRow = templateRow.cloneNode(true);
+      newRow.querySelectorAll('input').forEach((input) => {
+        input.value = '';
+      });
+
+      const actionButton = newRow.querySelector('button');
+      const actionIcon = actionButton?.querySelector('span');
+
+      if (actionButton && actionIcon) {
+        actionButton.classList.remove('bg-primary', 'text-white');
+        actionButton.classList.add('bg-slate-200', 'dark:bg-slate-700', 'text-slate-600', 'dark:text-slate-300');
+        actionIcon.textContent = 'delete';
+      }
+
+      lastRow.after(newRow);
+      attachDynamicListeners(newRow);
+      if (!options.skipSummary) {
+        refreshPlanSummary();
+      }
+      if (!options.skipPersist) {
+        persistDraft();
+      }
+      if (!options.silent) {
+        showToast('تم إضافة وجبة جديدة');
+      }
+    }
+
+    function deleteMealRow(deleteButton) {
+      const row = deleteButton.closest('.grid.grid-cols-12');
+      const section = deleteButton.closest('.space-y-6 > div');
+
+      if (!row || !section) {
+        return;
+      }
+
+      const rows = section.querySelectorAll(':scope > .grid.grid-cols-12');
+
+      if (rows.length > 1) {
+        row.remove();
+      } else {
+        row.querySelectorAll('input').forEach((input) => {
+          input.value = '';
         });
       }
-      // add row button (الغداء)
-      if (btn.querySelector('span')?.textContent.trim() === 'add' && btn.classList.contains('bg-primary')) {
-        btn.addEventListener('click', () => {
-          const section = btn.closest('.bg-slate-50, .rounded-2xl');
-          const row = section?.querySelector('.grid.grid-cols-12');
-          if (row) {
-            const newRow = row.cloneNode(true);
-            newRow.querySelectorAll('input').forEach(i => i.value = '');
-            row.after(newRow);
-            showToast('تم إضافة وجبة جديدة');
-            attachDynamicListeners(newRow);
-            persistDraft();
-          }
-        });
+
+      refreshPlanSummary();
+      persistDraft();
+      showToast('تم حذف الوجبة');
+    }
+
+    document.addEventListener('click', (event) => {
+      const button = event.target.closest('.space-y-6 > div > .grid.grid-cols-12 button');
+      if (!button) {
+        return;
+      }
+
+      const icon = button.querySelector('span')?.textContent.trim();
+
+      if (icon === 'add' && button.classList.contains('bg-primary')) {
+        addMealRow(button);
+      }
+
+      if (icon === 'delete') {
+        deleteMealRow(button);
       }
     });
 
@@ -687,6 +792,11 @@
     [planSearchPopup, planSearch].forEach(el => el.addEventListener('click', e => e.stopPropagation()));
     saveModal.addEventListener('click', (e) => {
       if (e.target === saveModal) saveModal.classList.add('hidden');
+    });
+    window.addEventListener('beforeunload', () => {
+      saveDraftToDatabase(serializePlan(), {
+        keepalive: true
+      });
     });
     attachDynamicListeners();
     restoreDraft();
