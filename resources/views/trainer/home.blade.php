@@ -109,7 +109,7 @@
       </div>
       <div class="p-8 space-y-8">
         <!-- Summary Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700/50 shadow-sm flex flex-col gap-2">
             <div class="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-2">
               <span class="material-symbols-outlined">groups</span>
@@ -150,7 +150,7 @@
               <span class="text-xs font-bold text-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 px-2 py-1 rounded-full">+12%</span>
             </div>
           </div>
-        </div>
+        </div> -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <!-- Upcoming Consultations -->
           <div class="lg:col-span-2 space-y-4">
@@ -159,62 +159,57 @@
                 <span class="material-symbols-outlined text-primary">event</span>
                 الاستشارات القادمة
               </h2>
-              <button class="text-primary text-sm font-bold hover:underline">عرض الكل</button>
             </div>
             <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700/50 overflow-hidden">
+              @php
+                $consultations = \App\Models\Consultation::where('trainer_id', auth()->id())
+                    ->whereIn('status', ['pending', 'approved'])
+                    ->orderBy('scheduled_at')
+                    ->get();
+              @endphp
+              @if($consultations->isEmpty())
+                <div class="p-8 text-center text-slate-400">
+                  <span class="material-symbols-outlined text-4xl">event_busy</span>
+                  <p class="mt-2 font-bold">لا توجد استشارات قادمة</p>
+                  <form action="{{ route('trainer.consultations.seed') }}" method="POST" class="mt-3">
+                    @csrf
+                    <button type="submit" class="text-primary text-sm font-bold hover:underline">إضافة بيانات تجريبية</button>
+                  </form>
+                </div>
+              @else
               <div class="divide-y divide-slate-100 dark:divide-slate-700/50">
-                <!-- Appointment 1 -->
-                <div class="flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+                @foreach($consultations as $consultation)
+                <div class="flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors" id="consultation-row-{{ $consultation->id }}">
                   <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-full bg-cover bg-center" data-alt="Portrait of Ahmed Mohammed" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCljV2_pF9FlWMOCyN-iq_JEgMtB5zHMKoHoPYVv3H3JUfQpo-O4gNpkU-MQSchwwIIuHMPIqL-pf87mvtV9qmOas5ueSrP4TT3Jcqeokv0SdkgBW5aOWIduad84cWieYCwb08dU6NoDIoxr71HbomfXZKZMr6e3xKOFUvfnxlE4wOetUXQIrenwM4pw6Yjo68GNdA73AWt4D-3ovbP9j8L7q_oookrOfs1TtrGgVVqfIbiBhhMfgiirz98Vd5UmKlY6IlOepptq5Bn')"></div>
+                    <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-black text-lg">
+                      {{ mb_substr($consultation->client_name, 0, 1) }}
+                    </div>
                     <div>
-                      <p class="font-bold">أحمد محمد</p>
+                      <p class="font-bold">{{ $consultation->client_name }}</p>
                       <p class="text-sm text-slate-500 flex items-center gap-1">
                         <span class="material-symbols-outlined text-xs">schedule</span>
-                        اليوم - 10:30 صباحاً
+                        {{ $consultation->scheduled_at?->diffForHumans() ?? '—' }}
                       </p>
                     </div>
                   </div>
                   <div class="flex items-center gap-2">
-                    <span class="px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full">استشارة أولية</span>
-                    <button class="bg-primary text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-emerald-600 transition-colors">انضم للجلسة</button>
+                    <span class="px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full">{{ $consultation->typeLabel() }}</span>
+                    @if($consultation->consultation_type === 'initial')
+                      <button onclick="joinSession({{ $consultation->id }})"
+                        class="join-btn bg-primary text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-emerald-600 transition-colors">
+                        انضم للجلسة
+                      </button>
+                    @else
+                      <button onclick="approveSession({{ $consultation->id }})"
+                        class="approve-btn bg-amber-500 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-amber-600 transition-colors">
+                        موافقة
+                      </button>
+                    @endif
                   </div>
                 </div>
-                <!-- Appointment 2 -->
-                <div class="flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
-                  <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-full bg-cover bg-center" data-alt="Portrait of Sarah Ali" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAdTUwQgYk1jcVkC3UoIat9sEdtIXDI8cOtis9F0lHdGchry38Wceu2LBBJHIaJmJIf0FCj6wpY025XPCdOx9KEnjDyWPEDTLIt2x4v7Y19wF6nbO3sA6hE-EprKk7BKTIJJ8fDg121LTbs-hh_bU3Qf602lvCAlQBiSW_C5a-9_8V1wjrJ0ceH3uMnmubdRPkFj63G1GcJfZEWgaE7djZHisYl1N4YggQ5XHtymMgLqq6EHgytOf_91wjgK2kjE9RlB1KlPArnbKfe')"></div>
-                    <div>
-                      <p class="font-bold">سارة علي</p>
-                      <p class="text-sm text-slate-500 flex items-center gap-1">
-                        <span class="material-symbols-outlined text-xs">schedule</span>
-                        اليوم - 01:00 مساءً
-                      </p>
-                    </div>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <span class="px-3 py-1 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold rounded-full">متابعة أسبوعية</span>
-                    <button class="approval-btn bg-amber-500 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-amber-600 transition-colors">موافقة</button>
-                  </div>
-                </div>
-                <!-- Appointment 3 -->
-                <div class="flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
-                  <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-full bg-cover bg-center" data-alt="Portrait of Khalid Fahd" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD3mn87tA6urx_dYBLXM0IsWmNVHtuoORc43Cfjvbaoq-Z6UtufbPgmXTJkssTyPK3StbrSI1JDL8yXf0N_iUwr4oIVwg_V2H8dT3PsUBmIU0MD-zNR37imk2fl0OT8fZTekGfDf5hJpDz_Xwf2jdhfTswDFPAH_xVY_f1Hw4sT1UGkWynTTfg5SJDSYejC82Fk3xlw2avdli_6kVpKD9O90IVzaR_g5lBGn88Hbe8P3vcR3Kg8zsytP4Dy1virVhC-WKbD2CuaT9GO')"></div>
-                    <div>
-                      <p class="font-bold">خالد فهد</p>
-                      <p class="text-sm text-slate-500 flex items-center gap-1">
-                        <span class="material-symbols-outlined text-xs">schedule</span>
-                        غداً - 11:00 صباحاً
-                      </p>
-                    </div>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <span class="px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full">تعديل خطة</span>
-                    <button class="approval-btn bg-amber-500 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-amber-600 transition-colors">موافقة</button>
-                  </div>
-                </div>
+                @endforeach
               </div>
+              @endif
             </div>
           </div>
           <!-- Recent Activity -->
@@ -270,6 +265,71 @@
       </div>
     </main>
   </div>
+  <!-- Video Call Modal -->
+  <div id="videoModal" class="hidden fixed inset-0 bg-black/80 z-[9999] flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl w-full max-w-4xl overflow-hidden">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800">
+        <div>
+          <h3 class="font-black text-lg" id="videoModalTitle">جلسة فيديو</h3>
+          <p class="text-xs text-slate-400" id="videoModalSubtitle"></p>
+        </div>
+        <button onclick="closeVideoModal()" class="text-slate-400 hover:text-red-500 transition-colors">
+          <span class="material-symbols-outlined text-2xl">close</span>
+        </button>
+      </div>
+      <div class="relative" style="height: 520px;">
+        <iframe id="jitsiFrame" allow="camera; microphone; fullscreen; display-capture" class="w-full h-full border-0"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+    function openVideoModal(roomUrl, title, subtitle) {
+      document.getElementById('videoModalTitle').textContent = title;
+      document.getElementById('videoModalSubtitle').textContent = subtitle || '';
+      document.getElementById('jitsiFrame').src = roomUrl;
+      document.getElementById('videoModal').classList.remove('hidden');
+    }
+
+    function closeVideoModal() {
+      document.getElementById('jitsiFrame').src = '';
+      document.getElementById('videoModal').classList.add('hidden');
+    }
+
+    function joinSession(id) {
+      fetch(`/trainer/consultations/${id}/join`, {
+        method: 'POST',
+        headers: { 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' },
+      })
+      .then(r => r.json())
+      .then(data => {
+        const row = document.getElementById('consultation-row-' + id);
+        const btn = row?.querySelector('.join-btn');
+        if (btn) { btn.textContent = '✓ انضممت'; btn.disabled = true; btn.classList.replace('bg-primary','bg-emerald-700'); }
+        openVideoModal(data.room_url, 'جلسة فيديو جارية', data.room_code);
+      });
+    }
+
+    function approveSession(id) {
+      fetch(`/trainer/consultations/${id}/approve`, {
+        method: 'POST',
+        headers: { 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' },
+      })
+      .then(r => r.json())
+      .then(data => {
+        const row = document.getElementById('consultation-row-' + id);
+        const btn = row?.querySelector('.approve-btn');
+        if (btn) { btn.textContent = '✓ تمت الموافقة'; btn.disabled = true; btn.classList.replace('bg-amber-500','bg-emerald-600'); }
+        openVideoModal(data.room_url, 'تمت الموافقة - انضم للجلسة', data.room_code);
+      });
+    }
+
+    document.getElementById('videoModal').addEventListener('click', function(e) {
+      if (e.target === this) closeVideoModal();
+    });
+  </script>
   <script>
     // ===== NOTIFICATIONS =====
     const notifBtn = document.getElementById('notifBtn');

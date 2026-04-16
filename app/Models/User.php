@@ -7,6 +7,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use App\Models\UserDailyMeal;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -52,6 +53,37 @@ class User extends Authenticatable
         ];
     }
 
+    public function dailyMeals(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(UserDailyMeal::class);
+    }
+
+    public function userNutritionPlans(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(\App\Models\UserNutritionPlan::class);
+    }
+
+    public function nutritionPlans(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(\App\Models\NutritionPlan::class, 'user_nutrition_plans')
+            ->withPivot(['is_primary', 'assigned_at'])
+            ->withTimestamps();
+    }
+
+    public function primaryNutritionPlan(): ?\App\Models\NutritionPlan
+    {
+        $unp = $this->userNutritionPlans()->where('is_primary', true)->first();
+        if ($unp) {
+            return \App\Models\NutritionPlan::find($unp->nutrition_plan_id);
+        }
+        // fallback: first assigned
+        $unp = $this->userNutritionPlans()->first();
+        if ($unp) {
+            return \App\Models\NutritionPlan::find($unp->nutrition_plan_id);
+        }
+        return null;
+    }
+
     public function adminProfile(): HasOne
     {
         return $this->hasOne(AdminProfile::class);
@@ -82,6 +114,11 @@ class User extends Authenticatable
         return $this->role === 'trainer';
     }
 
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
     public function isUser(): bool
     {
         return $this->role === 'user';
@@ -89,6 +126,10 @@ class User extends Authenticatable
 
     public function homeRouteName(): string
     {
+        if ($this->isAdmin()) {
+            return 'admin.home';
+        }
+
         if ($this->isTrainer()) {
             return 'trainer.home';
         }

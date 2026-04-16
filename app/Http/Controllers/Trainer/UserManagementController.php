@@ -15,6 +15,7 @@ class UserManagementController extends Controller
     public function index(): View
     {
         $managedUsers = User::query()
+            ->where('role', 'user')
             ->orderByDesc('created_at')
             ->get();
 

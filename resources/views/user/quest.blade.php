@@ -150,115 +150,55 @@
                         <!-- Expert List -->
                         <section>
                             <div class="flex items-center justify-between mb-4">
-                                <h4 class="text-lg font-bold">الخبراء المتاحون</h4>
-                                <button class="text-primary text-sm font-bold hover:underline">عرض الكل</button>
+                                <h4 class="text-lg font-bold">المدربون المتاحون</h4>
+                                <span class="text-xs text-slate-400 font-bold">{{ $trainers->count() }} مدرب</span>
                             </div>
+
+                            @if($currentTrainer)
+                            <div class="mb-4 rounded-2xl border border-primary bg-emerald-50 dark:bg-emerald-900/20 p-4 flex items-center gap-3">
+                                <span class="material-symbols-outlined text-primary">check_circle</span>
+                                <div>
+                                    <p class="text-sm font-black text-primary">مدربك الحالي</p>
+                                    <p class="font-bold text-slate-800 dark:text-white">{{ $currentTrainer->name }}</p>
+                                </div>
+                            </div>
+                            @endif
+
+                            @if($trainers->isEmpty())
+                            <div class="rounded-2xl border border-dashed border-slate-200 p-8 text-center text-slate-400">
+                                <span class="material-symbols-outlined text-4xl">person_off</span>
+                                <p class="mt-2 font-bold">لا يوجد مدربون مسجلون بعد</p>
+                            </div>
+                            @else
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <!-- Expert Card 1 -->
-                                <div
-                                    class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl flex items-center gap-4 hover:border-primary transition-colors cursor-pointer group">
-                                    <div class="relative">
-                                        <div class="w-16 h-16 rounded-full overflow-hidden bg-slate-100">
-                                            <img class="w-full h-full object-cover"
-                                                data-alt="أخصائي التغذية د. محمد علي"
-                                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuALihguexwbSiSeJyZLsn1q6G6cROgrg0DVQ-FSgIYjEDHO1cAJ_-LiDxce3RNtxSXZxBCJD4F7-bNz7z81Z3BYMwc0rhk4F84StTVY3fEo8jHIq-ltBCqdAVnJB1RKGV0saNENuPZ6z0xx5bnu8oBhCF3kMZ6h_QT3bQd73k0IHFhomGgmGNkjYL6_B-31YcKdLEMDNzLoqw9wyBZvn3edu6BCfCSAcHWXeZEA7aPdEgYMqM7lPJPOcpope9tNakbjmqw4u8KLcI91" />
+                                @foreach($trainers as $trainer)
+                                <div class="bg-white dark:bg-slate-900 border {{ $currentTrainer?->id === $trainer->id ? 'border-primary' : 'border-slate-200 dark:border-slate-800' }} p-4 rounded-2xl flex items-center gap-4 hover:border-primary transition-colors group"
+                                    id="trainer-card-{{ $trainer->id }}">
+                                    <div class="relative shrink-0">
+                                        <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary font-black text-2xl">
+                                            {{ mb_substr($trainer->name, 0, 1) }}
                                         </div>
-                                        <div
-                                            class="absolute bottom-0 right-0 w-4 h-4 bg-emerald-500 border-2 border-white dark:border-slate-900 rounded-full">
-                                        </div>
+                                        <div class="absolute bottom-0 right-0 w-4 h-4 {{ $trainer->status === 'active' ? 'bg-emerald-500' : 'bg-slate-300' }} border-2 border-white dark:border-slate-900 rounded-full"></div>
                                     </div>
-                                    <div class="flex-1">
-                                        <h6 class="font-bold text-slate-900 dark:text-white group-hover:text-primary">
-                                            د. محمد علي</h6>
-                                        <p class="text-xs text-slate-500">مدرب لياقة بدنية</p>
-                                        <div class="flex items-center mt-1">
-                                            <span class="material-symbols-outlined text-xs text-amber-500"
-                                                style="font-variation-settings: 'FILL' 1;">star</span>
-                                            <span class="text-xs font-medium mr-1">4.8</span>
-                                        </div>
+                                    <div class="flex-1 min-w-0">
+                                        <h6 class="font-bold text-slate-900 dark:text-white group-hover:text-primary truncate">{{ $trainer->name }}</h6>
+                                        <p class="text-xs text-slate-500">{{ $trainer->email }}</p>
+                                        <p class="text-xs mt-1 {{ $trainer->status === 'active' ? 'text-emerald-500' : 'text-slate-400' }} font-bold">
+                                            {{ $trainer->status === 'active' ? 'متاح' : 'غير متاح' }}
+                                        </p>
                                     </div>
-                                    <span
-                                        class="material-symbols-outlined text-slate-400 group-hover:translate-x-[-4px] transition-transform">chevron_left</span>
+                                    <button onclick="selectTrainer({{ $trainer->id }}, '{{ $trainer->name }}')"
+                                        class="shrink-0 px-3 py-2 rounded-xl text-xs font-black transition-all
+                                        {{ $currentTrainer?->id === $trainer->id
+                                            ? 'bg-primary text-white'
+                                            : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-primary hover:text-white' }}"
+                                        id="select-btn-{{ $trainer->id }}">
+                                        {{ $currentTrainer?->id === $trainer->id ? 'مدربك' : 'اختيار' }}
+                                    </button>
                                 </div>
-                                <!-- Expert Card 2 -->
-                                <div
-                                    class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl flex items-center gap-4 hover:border-primary transition-colors cursor-pointer group">
-                                    <div class="relative">
-                                        <div class="w-16 h-16 rounded-full overflow-hidden bg-slate-100">
-                                            <img class="w-full h-full object-cover"
-                                                data-alt="أخصائية التغذية د. ياسمين خالد"
-                                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHxEsG9tWf-vi5Y4zrA5QYMLZTdfX3nSMQVUE36wJXZccpRg3xCcNX47N64pkjVPJK16SyVc8rRI42MUPD82YmutpprKmYulSxsOgNkNMlCkexHbju-WVNgysKhxpJOUQYQenWiuPvui39Db9G5biZXXABW0K50wFUhfiZIx5jNobll2AjCh8zh0aj3B49l25paMe6aW1ez8RArcDMktbFqRpWAEOzdRdCOq5_pkmdrlgegz_zYbjDpr57Szq_wtOptmKB-u88oWHE" />
-                                        </div>
-                                        <div
-                                            class="absolute bottom-0 right-0 w-4 h-4 bg-slate-300 dark:bg-slate-700 border-2 border-white dark:border-slate-900 rounded-full">
-                                        </div>
-                                    </div>
-                                    <div class="flex-1">
-                                        <h6 class="font-bold text-slate-900 dark:text-white group-hover:text-primary">
-                                            د. ياسمين خالد</h6>
-                                        <p class="text-xs text-slate-500">تغذية أطفال</p>
-                                        <div class="flex items-center mt-1">
-                                            <span class="material-symbols-outlined text-xs text-amber-500"
-                                                style="font-variation-settings: 'FILL' 1;">star</span>
-                                            <span class="text-xs font-medium mr-1">4.7</span>
-                                        </div>
-                                    </div>
-                                    <span
-                                        class="material-symbols-outlined text-slate-400 group-hover:translate-x-[-4px] transition-transform">chevron_left</span>
-                                </div>
-                                <!-- Expert Card 3 -->
-                                <div
-                                    class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl flex items-center gap-4 hover:border-primary transition-colors cursor-pointer group">
-                                    <div class="relative">
-                                        <div class="w-16 h-16 rounded-full overflow-hidden bg-slate-100">
-                                            <img class="w-full h-full object-cover"
-                                                data-alt="خبير التغذية أ. خالد منصور"
-                                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuC90w1sQ_l_EaMFpPQR1kP6ljgORSKoxDzEzya903Bv3cmPk5Sw2YBcadvwKCmR13W5CoZLCaclY591ZfZt9UH8n3Cx8SF2ut5nW167DkSNZndKRpdtB1BFroencZupaiDRvzXJCgsxXor_xUwSjbfs-YMXeEF6j86Sk9rB6jJT7bMSxHcmMTFaMCRMnRxYvmyrMDg53vJbLSFnTT8evApY7VWMc787SisR20piK6CBtBzOfHNcTw-Zx7OfTeQEgix81Uk3vlWWIdLb" />
-                                        </div>
-                                        <div
-                                            class="absolute bottom-0 right-0 w-4 h-4 bg-emerald-500 border-2 border-white dark:border-slate-900 rounded-full">
-                                        </div>
-                                    </div>
-                                    <div class="flex-1">
-                                        <h6 class="font-bold text-slate-900 dark:text-white group-hover:text-primary">
-                                            أ. خالد منصور</h6>
-                                        <p class="text-xs text-slate-500">تخطيط وجبات كيتو</p>
-                                        <div class="flex items-center mt-1">
-                                            <span class="material-symbols-outlined text-xs text-amber-500"
-                                                style="font-variation-settings: 'FILL' 1;">star</span>
-                                            <span class="text-xs font-medium mr-1">4.9</span>
-                                        </div>
-                                    </div>
-                                    <span
-                                        class="material-symbols-outlined text-slate-400 group-hover:translate-x-[-4px] transition-transform">chevron_left</span>
-                                </div>
-                                <!-- Expert Card 4 -->
-                                <div
-                                    class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl flex items-center gap-4 hover:border-primary transition-colors cursor-pointer group">
-                                    <div class="relative">
-                                        <div class="w-16 h-16 rounded-full overflow-hidden bg-slate-100">
-                                            <img class="w-full h-full object-cover"
-                                                data-alt="د. ليلى فوزي استشارية السمنة"
-                                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiei-lXBP_hisMFM0Hdx9R17k8hktiGs9Szy20M0bppfsvsikHsPxmfL3sIcELdqV2g4876wtUvu-gAoFry52qBAPomolDbiyAglI5LBvSblxHA8v4CiZ6Znh2MY5rRsFuu5wzTujd3Qck1ZqKrEPLc0eT4X1yFDhYq2KKZn6oNR8Uir5uXUm9IBvxFRx1L99DY28He0HJOVud8wYZ0wMkxm1xZ64_K1l5tTCygVrrh3SVblqacBFg3T17algWBA0mExXUvTE-7VoL" />
-                                        </div>
-                                        <div
-                                            class="absolute bottom-0 right-0 w-4 h-4 bg-emerald-500 border-2 border-white dark:border-slate-900 rounded-full">
-                                        </div>
-                                    </div>
-                                    <div class="flex-1">
-                                        <h6 class="font-bold text-slate-900 dark:text-white group-hover:text-primary">
-                                            د. ليلى فوزي</h6>
-                                        <p class="text-xs text-slate-500">استشارية سمنة ونحافة</p>
-                                        <div class="flex items-center mt-1">
-                                            <span class="material-symbols-outlined text-xs text-amber-500"
-                                                style="font-variation-settings: 'FILL' 1;">star</span>
-                                            <span class="text-xs font-medium mr-1">5.0</span>
-                                        </div>
-                                    </div>
-                                    <span
-                                        class="material-symbols-outlined text-slate-400 group-hover:translate-x-[-4px] transition-transform">chevron_left</span>
-                                </div>
+                                @endforeach
                             </div>
+                            @endif
                         </section>
                     </div>
                     <!-- Left Column: Appointments & Quick Actions -->
@@ -673,4 +613,40 @@
             if (e.key === 'Enter') sendSupport();
         });
         renderBookings();
+
+        // Select trainer from DB
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+        function selectTrainer(trainerId, trainerName) {
+            fetch('{{ route('user.quest.assign') }}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({ trainer_id: trainerId }),
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    // reset all cards
+                    document.querySelectorAll('[id^="trainer-card-"]').forEach(card => {
+                        card.classList.remove('border-primary');
+                        card.classList.add('border-slate-200');
+                    });
+                    document.querySelectorAll('[id^="select-btn-"]').forEach(btn => {
+                        btn.textContent = 'اختيار';
+                        btn.classList.remove('bg-primary', 'text-white');
+                        btn.classList.add('bg-slate-100', 'text-slate-600');
+                    });
+                    // highlight selected
+                    const card = document.getElementById('trainer-card-' + trainerId);
+                    const btn = document.getElementById('select-btn-' + trainerId);
+                    if (card) { card.classList.add('border-primary'); card.classList.remove('border-slate-200'); }
+                    if (btn) { btn.textContent = 'مدربك'; btn.classList.add('bg-primary','text-white'); btn.classList.remove('bg-slate-100','text-slate-600'); }
+                    showToast('تم اختيار ' + trainerName + ' كمدربك ✓');
+                }
+            });
+        }
     </script>

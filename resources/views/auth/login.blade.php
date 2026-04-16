@@ -209,6 +209,10 @@
             }
 
             liveValidate(document.getElementById('login-email'), document.getElementById('login-email-err'), validateEmail);
+
+   
+
+            liveValidate(document.getElementById('login-pass'), document.getElementById('login-pass-err'), validatePassword);
         </script>
     </body>
 </html>

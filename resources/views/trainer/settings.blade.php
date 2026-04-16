@@ -181,9 +181,9 @@
                                 <p class="mt-3 text-2xl font-black text-primary">12,450 م.ج</p>
                             </div>
 
-                            <button class="w-full rounded-2xl border border-primary px-4 py-3 font-black text-primary transition hover:bg-primary hover:text-white" type="button">
+                            <!-- <button class="w-full rounded-2xl border border-primary px-4 py-3 font-black text-primary transition hover:bg-primary hover:text-white" type="button">
                                 تعديل الأرباح
-                            </button>
+                            </button> -->
                         </div>
                     </section>
 

@@ -156,6 +156,8 @@
                                 inputmode="numeric"
                             />
                         </div>
+
+                        <p id="su-phone-err" class="text-red-500 text-xs pr-1 hidden"></p>
                     </div>
 
                     <div class="space-y-2">
@@ -230,6 +232,7 @@
                             أوافق على <a class="text-primary font-bold hover:underline transition-all" href="#">الشروط والأحكام</a> و <a class="text-primary font-bold hover:underline transition-all" href="#">سياسة الخصوصية</a> الخاصة بـ NutriZone مصر.
                         </label>
                     </div>
+                    <p id="su-terms-err" class="text-red-500 text-xs pr-1 hidden">يجب الموافقة على الشروط والأحكام للمتابعة</p>
 
                     <button class="w-full bg-primary hover:bg-emerald-600 text-white py-5 rounded-2xl font-black text-xl shadow-xl shadow-primary/30 transition-all transform hover:scale-[1.01] active:scale-95" type="submit">
                         إنشاء حساب
@@ -275,8 +278,8 @@
             }
 
             function validatePass(val) {
-                if (val.length > 0 && !/^\d+$/.test(val)) {
-                    return 'كلمة المرور يجب أن تحتوي على أرقام فقط';
+                if (val.length > 0 && val.length < 6) {
+                    return 'كلمة المرور قصيرة جداً (يجب أن تكون 6 أحرف على الأقل)';
                 }
 
                 return '';
@@ -321,6 +324,35 @@
             liveValidate(document.getElementById('su-email'), document.getElementById('su-email-err'), validateEmail);
             liveValidate(document.getElementById('su-pass'), document.getElementById('su-pass-err'), validatePass);
             liveValidate(document.getElementById('su-pass2'), document.getElementById('su-pass2-err'), validatePass2);
+
+            function validatePhone(val) {
+                // allow international formats and separators (spaces, +, -, parentheses)
+                if (!val) return '';
+                if (val.length < 6) {
+                    return 'رقم الهاتف قصير جداً';
+                }
+                if (val.length > 30) {
+                    return 'رقم الهاتف طويل جداً';
+                }
+                return '';
+            }
+
+            liveValidate(document.getElementById('display-phone'), document.getElementById('su-phone-err'), validatePhone);
+
+            document.querySelector('form').addEventListener('submit', function (e) {
+                const terms = document.getElementById('terms');
+                const termsErr = document.getElementById('su-terms-err');
+                if (!terms.checked) {
+                    e.preventDefault();
+                    termsErr.classList.remove('hidden');
+                } else {
+                    termsErr.classList.add('hidden');
+                }
+            });
+
+            document.getElementById('terms').addEventListener('change', function () {
+                document.getElementById('su-terms-err').classList.toggle('hidden', this.checked);
+            });
         </script>
     </body>
 </html>

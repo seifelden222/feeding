@@ -12,6 +12,10 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use App\Models\PatientProfile;
+use App\Models\UserNutritionPlan;
+use App\Models\NutritionPlan;
+use Carbon\Carbon;
 
 class RegisteredUserController extends Controller
 {
@@ -43,6 +47,34 @@ class RegisteredUserController extends Controller
             'role' => $request->string('role')->toString(),
             'password' => Hash::make($request->password),
         ]);
+
+        // If user provided a selected_system, try to map it to an existing NutritionPlan and assign it as primary
+        if ($request->filled('selected_system')) {
+            $key = $request->input('selected_system');
+            $map = [
+                'diabetes' => ['سكري', 'diabetes', 'تغذية مرضى السكري'],
+                'weight_loss' => ['خسارة الوزن', 'weight loss', 'إنقاص الوزن'],
+                'muscle_building' => ['بناء العضلات', 'muscle', 'تضخيم'],
+            ];
+
+            $foundPlan = null;
+            if (isset($map[$key])) {
+                foreach ($map[$key] as $term) {
+                    $foundPlan = NutritionPlan::query()->where('title', 'like', "%{$term}%")->first();
+                    if ($foundPlan) break;
+                }
+            }
+
+            if ($foundPlan) {
+                UserNutritionPlan::updateOrCreate([
+                    'user_id' => $user->id,
+                    'nutrition_plan_id' => $foundPlan->id,
+                ], [
+                    'is_primary' => true,
+                    'assigned_at' => now(),
+                ]);
+            }
+        }
 
         event(new Registered($user));
 

@@ -21,7 +21,7 @@ class EnsureUserRole
             return redirect()->route('login');
         }
 
-        if (! in_array($user->role, ['user', 'trainer'], true)) {
+        if (! in_array($user->role, ['user', 'trainer', 'admin'], true)) {
             abort(403, 'User role is not configured.');
         }
 
