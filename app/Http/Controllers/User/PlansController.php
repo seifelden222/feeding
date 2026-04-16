@@ -35,6 +35,7 @@ class PlansController extends Controller
                         'calories' => $t->default_calories,
                         'notes' => $t->meal_notes,
                         'meal_type' => $t->meal_type ?? 'breakfast',
+                        'image_path' => null,
                         'consumed_at' => null,
                     ];
                 });
@@ -44,21 +45,21 @@ class PlansController extends Controller
                 if ($sel) {
                     if ($sel === 'diabetes') {
                         $meals = collect([
-                            (object)['id'=>'tpl-d-1','name'=>'شوفان مع فاكهة ومكسرات','calories'=>380,'notes'=>'','meal_type'=>'breakfast','consumed_at'=>null],
-                            (object)['id'=>'tpl-d-2','name'=>'سلطة تونة مع خبز كامل','calories'=>520,'notes'=>'','meal_type'=>'lunch','consumed_at'=>null],
-                            (object)['id'=>'tpl-d-3','name'=>'خضار مشوي مع سمك','calories'=>300,'notes'=>'','meal_type'=>'dinner','consumed_at'=>null],
+                            (object) ['id' => 'tpl-d-1', 'name' => 'شوفان مع فاكهة ومكسرات', 'calories' => 380, 'notes' => '', 'meal_type' => 'breakfast', 'image_path' => null, 'consumed_at' => null],
+                            (object) ['id' => 'tpl-d-2', 'name' => 'سلطة تونة مع خبز كامل', 'calories' => 520, 'notes' => '', 'meal_type' => 'lunch', 'image_path' => null, 'consumed_at' => null],
+                            (object) ['id' => 'tpl-d-3', 'name' => 'خضار مشوي مع سمك', 'calories' => 300, 'notes' => '', 'meal_type' => 'dinner', 'image_path' => null, 'consumed_at' => null],
                         ]);
                     } elseif ($sel === 'muscle_building') {
                         $meals = collect([
-                            (object)['id'=>'tpl-m-1','name'=>'بيضتين مع توست بروتين','calories'=>520,'notes'=>'','meal_type'=>'breakfast','consumed_at'=>null],
-                            (object)['id'=>'tpl-m-2','name'=>'صدر دجاج مع بطاطا حلوة','calories'=>700,'notes'=>'','meal_type'=>'lunch','consumed_at'=>null],
-                            (object)['id'=>'tpl-m-3','name'=>'سموثي بروتين مع موز','calories'=>420,'notes'=>'','meal_type'=>'dinner','consumed_at'=>null],
+                            (object) ['id' => 'tpl-m-1', 'name' => 'بيضتين مع توست بروتين', 'calories' => 520, 'notes' => '', 'meal_type' => 'breakfast', 'image_path' => null, 'consumed_at' => null],
+                            (object) ['id' => 'tpl-m-2', 'name' => 'صدر دجاج مع بطاطا حلوة', 'calories' => 700, 'notes' => '', 'meal_type' => 'lunch', 'image_path' => null, 'consumed_at' => null],
+                            (object) ['id' => 'tpl-m-3', 'name' => 'سموثي بروتين مع موز', 'calories' => 420, 'notes' => '', 'meal_type' => 'dinner', 'image_path' => null, 'consumed_at' => null],
                         ]);
                     } else {
                         $meals = collect([
-                            (object)['id'=>'tpl-w-1','name'=>'أومليت خضار مع خبز شوفان','calories'=>450,'notes'=>'','meal_type'=>'breakfast','consumed_at'=>null],
-                            (object)['id'=>'tpl-w-2','name'=>'دجاج مشوي مع أرز وخضار','calories'=>620,'notes'=>'','meal_type'=>'lunch','consumed_at'=>null],
-                            (object)['id'=>'tpl-w-3','name'=>'زبادي يوناني مع فاكهة ومكسرات','calories'=>320,'notes'=>'','meal_type'=>'dinner','consumed_at'=>null],
+                            (object) ['id' => 'tpl-w-1', 'name' => 'أومليت خضار مع خبز شوفان', 'calories' => 450, 'notes' => '', 'meal_type' => 'breakfast', 'image_path' => null, 'consumed_at' => null],
+                            (object) ['id' => 'tpl-w-2', 'name' => 'دجاج مشوي مع أرز وخضار', 'calories' => 620, 'notes' => '', 'meal_type' => 'lunch', 'image_path' => null, 'consumed_at' => null],
+                            (object) ['id' => 'tpl-w-3', 'name' => 'زبادي يوناني مع فاكهة ومكسرات', 'calories' => 320, 'notes' => '', 'meal_type' => 'dinner', 'image_path' => null, 'consumed_at' => null],
                         ]);
                     }
                 }

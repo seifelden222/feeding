@@ -15,13 +15,37 @@
             <span class="material-symbols-outlined">manage_accounts</span>
             إدارة المستخدمين
         </a>
+        <a href="{{ url('/admin/subscriptions') }}"
+           class="flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-colors {{ request()->is('admin/subscriptions*') ? 'bg-primary text-white' : 'text-slate-600 hover:bg-slate-50' }}">
+            <span class="material-symbols-outlined">credit_card</span>
+            الاشتراكات
+        </a>
+        <a href="{{ url('/admin/payments') }}"
+           class="flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-colors {{ request()->is('admin/payments*') ? 'bg-primary text-white' : 'text-slate-600 hover:bg-slate-50' }}">
+            <span class="material-symbols-outlined">paid</span>
+            المدفوعات
+        </a>
+        <a href="{{ url('/admin/reports') }}"
+           class="flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-colors {{ request()->is('admin/reports*') ? 'bg-primary text-white' : 'text-slate-600 hover:bg-slate-50' }}">
+            <span class="material-symbols-outlined">report</span>
+            التقارير
+        </a>
+        <a href="{{ url('/admin/complaints') }}"
+           class="flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-colors {{ request()->is('admin/complaints*') ? 'bg-primary text-white' : 'text-slate-600 hover:bg-slate-50' }}">
+            <span class="material-symbols-outlined">feedback</span>
+            الشكاوى
+        </a>
     </nav>
 
     <div class="p-4 border-t border-slate-100">
         <div class="flex items-center gap-3 px-4 py-3 mb-2">
-            <div class="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center">
-                <span class="material-symbols-outlined text-primary text-lg">admin_panel_settings</span>
-            </div>
+            @if(auth()->user()?->profile_photo_path)
+                <div class="w-9 h-9 rounded-full bg-cover bg-center" style="background-image: url('{{ asset('storage/' . auth()->user()->profile_photo_path) }}')"></div>
+            @else
+                <div class="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-primary text-lg">admin_panel_settings</span>
+                </div>
+            @endif
             <div>
                 <p class="text-sm font-black text-slate-800">{{ auth()->user()->name }}</p>
                 <p class="text-xs text-slate-400">أدمن</p>

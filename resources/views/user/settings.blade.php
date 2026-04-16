@@ -74,7 +74,7 @@
                             <h2 class="text-xl font-black">الملف الشخصي</h2>
                         </div>
 
-                        <form action="{{ route('profile.update') }}" class="grid grid-cols-1 gap-4 md:grid-cols-2" method="POST">
+                        <form action="{{ route('profile.update') }}" class="grid grid-cols-1 gap-4 md:grid-cols-2" method="POST" enctype="multipart/form-data">
                             @csrf
                             @method('PATCH')
 
@@ -97,6 +97,43 @@
                             <div class="md:col-span-2 flex justify-end">
                                 <button class="rounded-2xl bg-primary px-6 py-3 font-black text-white transition hover:bg-emerald-600" type="submit">
                                     حفظ البيانات
+                                </button>
+                            </div>
+                        </form>
+                    </section>
+
+                    <section class="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                        <div class="mb-6 flex items-center gap-3">
+                            <span class="material-symbols-outlined text-primary">photo_camera</span>
+                            <h2 class="text-xl font-black">الصور والقياسات</h2>
+                        </div>
+
+                        <form action="{{ route('profile.photos') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+                            @csrf
+                            @method('PATCH')
+
+                            <div>
+                                <label class="mb-2 block text-sm font-bold">صورة الملف الشخصي</label>
+                                <input type="file" name="profile_photo" accept="image/*" />
+                                @error('profile_photo')
+                                    <p class="mt-1 text-xs text-rose-500">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label class="mb-2 block text-sm font-bold">صور الجسم (للمتابعة)</label>
+                                <input type="file" name="body_images[]" accept="image/*" multiple />
+                                @error('body_images')
+                                    <p class="mt-1 text-xs text-rose-500">{{ $message }}</p>
+                                @enderror
+                                @error('body_images.*')
+                                    <p class="mt-1 text-xs text-rose-500">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="flex justify-end">
+                                <button class="rounded-2xl bg-primary px-6 py-3 font-black text-white transition hover:bg-emerald-600" type="submit">
+                                    رفع الصور
                                 </button>
                             </div>
                         </form>

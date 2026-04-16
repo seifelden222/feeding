@@ -6,8 +6,8 @@ namespace App\Models;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use App\Models\UserDailyMeal;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -24,9 +24,11 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'profile_photo_path',
         'phone',
         'status',
         'role',
+        'selected_system',
         'password',
     ];
 
@@ -53,34 +55,35 @@ class User extends Authenticatable
         ];
     }
 
-    public function dailyMeals(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function dailyMeals(): HasMany
     {
         return $this->hasMany(UserDailyMeal::class);
     }
 
-    public function userNutritionPlans(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function userNutritionPlans(): HasMany
     {
-        return $this->hasMany(\App\Models\UserNutritionPlan::class);
+        return $this->hasMany(UserNutritionPlan::class);
     }
 
-    public function nutritionPlans(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    public function nutritionPlans(): BelongsToMany
     {
-        return $this->belongsToMany(\App\Models\NutritionPlan::class, 'user_nutrition_plans')
+        return $this->belongsToMany(NutritionPlan::class, 'user_nutrition_plans')
             ->withPivot(['is_primary', 'assigned_at'])
             ->withTimestamps();
     }
 
-    public function primaryNutritionPlan(): ?\App\Models\NutritionPlan
+    public function primaryNutritionPlan(): ?NutritionPlan
     {
         $unp = $this->userNutritionPlans()->where('is_primary', true)->first();
         if ($unp) {
-            return \App\Models\NutritionPlan::find($unp->nutrition_plan_id);
+            return NutritionPlan::find($unp->nutrition_plan_id);
         }
         // fallback: first assigned
         $unp = $this->userNutritionPlans()->first();
         if ($unp) {
-            return \App\Models\NutritionPlan::find($unp->nutrition_plan_id);
+            return NutritionPlan::find($unp->nutrition_plan_id);
         }
+
         return null;
     }
 
@@ -92,6 +95,11 @@ class User extends Authenticatable
     public function patientProfile(): HasOne
     {
         return $this->hasOne(PatientProfile::class);
+    }
+
+    public function bodyImages(): HasMany
+    {
+        return $this->hasMany(BodyImage::class);
     }
 
     public function specialistProfile(): HasOne

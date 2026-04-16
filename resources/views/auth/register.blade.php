@@ -149,15 +149,19 @@
                             </div>
                             <input
                                 id="display-phone"
+                                name="phone"
                                 class="w-full pr-12 pl-24 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none transition-all text-left font-sans"
                                 dir="ltr"
                                 placeholder="1XXXXXXXXX"
                                 type="tel"
                                 inputmode="numeric"
+                                value="{{ old('phone') }}"
                             />
                         </div>
 
-                        <p id="su-phone-err" class="text-red-500 text-xs pr-1 hidden"></p>
+                        <p id="su-phone-err" class="text-red-500 text-xs pr-1 {{ $errors->has('phone') ? '' : 'hidden' }}">
+                            {{ $errors->first('phone') }}
+                        </p>
                     </div>
 
                     <div class="space-y-2">
@@ -226,6 +230,33 @@
                         </div>
                     </div>
 
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <label class="block text-sm font-extrabold text-darkTeal pr-1" for="su-age">السن (سنة)</label>
+                            <input id="su-age" name="age" type="number" min="10" max="120" value="{{ old('age') }}" class="w-full pr-4 pl-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none transition-all @if($errors->has('age')) field-error @endif" placeholder="مثال: 30" />
+                            <p class="text-red-500 text-xs pr-1 {{ $errors->has('age') ? '' : 'hidden' }}">
+                                {{ $errors->first('age') }}
+                            </p>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-sm font-extrabold text-darkTeal pr-1" for="su-system">اختيار النظام (اختياري)</label>
+                            <div class="relative">
+                                <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">task_alt</span>
+                                <select id="su-system" name="selected_system" class="w-full pr-12 pl-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none transition-all @if($errors->has('selected_system')) field-error @endif">
+                                    <option value="">بدون اختيار</option>
+                                    <option value="diabetes" {{ old('selected_system') === 'diabetes' ? 'selected' : '' }}>نظام السكري</option>
+                                    <option value="weight_loss" {{ old('selected_system') === 'weight_loss' ? 'selected' : '' }}>خسارة الوزن</option>
+                                    <option value="muscle_building" {{ old('selected_system') === 'muscle_building' ? 'selected' : '' }}>بناء العضلات</option>
+                                </select>
+                            </div>
+
+                            <p id="su-system-err" class="text-red-500 text-xs pr-1 {{ $errors->has('selected_system') ? '' : 'hidden' }}">
+                                {{ $errors->first('selected_system') }}
+                            </p>
+                        </div>
+                    </div>
+
                     <div class="flex items-start gap-3 py-3">
                         <input class="mt-1 w-5 h-5 text-primary border-slate-300 rounded-lg focus:ring-primary cursor-pointer" id="terms" type="checkbox"/>
                         <label class="text-sm text-slate-600 font-semibold leading-relaxed cursor-pointer" for="terms">
@@ -278,8 +309,24 @@
             }
 
             function validatePass(val) {
-                if (val.length > 0 && val.length < 6) {
-                    return 'كلمة المرور قصيرة جداً (يجب أن تكون 6 أحرف على الأقل)';
+                if (!val) {
+                    return '';
+                }
+
+                if (val.length < 8) {
+                    return 'كلمة المرور قصيرة جداً (يجب أن تكون 8 أحرف على الأقل)';
+                }
+
+                if (!/\p{L}/u.test(val)) {
+                    return 'كلمة المرور يجب أن تحتوي على حرف واحد على الأقل';
+                }
+
+                if (!/\p{N}/u.test(val)) {
+                    return 'كلمة المرور يجب أن تحتوي على رقم واحد على الأقل';
+                }
+
+                if (!/[\p{P}\p{S}]/u.test(val)) {
+                    return 'كلمة المرور يجب أن تحتوي على رمز واحد على الأقل مثل: ! @ #';
                 }
 
                 return '';
@@ -327,13 +374,20 @@
 
             function validatePhone(val) {
                 // allow international formats and separators (spaces, +, -, parentheses)
-                if (!val) return '';
-                if (val.length < 6) {
-                    return 'رقم الهاتف قصير جداً';
+                if (!val) {
+                    return '';
                 }
+
+                const digits = val.replace(/\D+/g, '');
+
+                if (digits.length > 0 && digits.length < 10) {
+                    return 'رقم الهاتف يجب ألا يقل عن 10 أرقام';
+                }
+
                 if (val.length > 30) {
                     return 'رقم الهاتف طويل جداً';
                 }
+
                 return '';
             }
 

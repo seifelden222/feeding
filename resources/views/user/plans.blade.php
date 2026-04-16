@@ -64,6 +64,12 @@
                                 'dinner'    => 'text-amber-500 bg-amber-50',
                                 'snack'     => 'text-purple-500 bg-purple-50',
                             ];
+                            $typeLabels = [
+                                'breakfast' => 'الإفطار',
+                                'lunch'     => 'الغداء',
+                                'dinner'    => 'العشاء',
+                                'snack'     => 'سناك',
+                            ];
                             $isConsumed = $meal->consumed_at !== null;
                         @endphp
                         <article class="overflow-hidden rounded-[2rem] border {{ $isConsumed ? 'border-primary' : 'border-slate-200 dark:border-slate-800' }} bg-white shadow-sm dark:bg-slate-900" id="meal-card-{{ $meal->id }}">
@@ -86,7 +92,7 @@
                                 <div class="flex items-start justify-between gap-4">
                                     <div>
                                         <span class="rounded-full px-3 py-1 text-xs font-black {{ $typeColors[$meal->meal_type] ?? 'text-slate-500 bg-slate-50' }}">
-                                            {{ $meal->mealTypeLabel() }}
+                                            {{ $typeLabels[$meal->meal_type] ?? $meal->meal_type }}
                                         </span>
                                         <h3 class="mt-3 text-2xl font-black text-slate-900 dark:text-white">{{ $meal->name }}</h3>
                                         @if($meal->notes)

@@ -20,6 +20,11 @@
             'route' => 'user.plans',
         ],
         [
+            'label' => 'الصور والقياسات',
+            'icon' => 'photo_camera',
+            'route' => 'user.body-images',
+        ],
+        [
             'label' => 'الإعدادات',
             'icon' => 'settings',
             'route' => 'user.settings',
@@ -60,9 +65,13 @@
 
         <div class="space-y-4 border-t border-gray-100 pt-6 dark:border-gray-800">
             <div class="flex items-center gap-3">
-                <div class="flex h-11 w-11 items-center justify-center rounded-full border-2 border-primary bg-emerald-50 text-base font-black text-primary dark:bg-emerald-900/20">
-                    {{ $userInitial }}
-                </div>
+                @if($user?->profile_photo_path)
+                    <div class="h-11 w-11 rounded-full border-2 border-primary bg-cover bg-center" style="background-image: url('{{ asset('storage/' . $user->profile_photo_path) }}')"></div>
+                @else
+                    <div class="flex h-11 w-11 items-center justify-center rounded-full border-2 border-primary bg-emerald-50 text-base font-black text-primary dark:bg-emerald-900/20">
+                        {{ $userInitial }}
+                    </div>
+                @endif
 
                 <div class="min-w-0 flex-1">
                     <p class="truncate text-sm font-bold dark:text-white">{{ $userName }}</p>

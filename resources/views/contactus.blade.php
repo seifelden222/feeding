@@ -114,31 +114,38 @@
               <div>
                 <h4 class="font-bold text-xl mb-1 dark:text-white">ساعات العمل</h4>
                 <p class="text-slate-600 dark:text-slate-400">السبت - الخميس: 10:00 ص - 9:00 م</p>
-                <p class="text-slate-600 dark:text-slate-400">الجمعة: مغلق</p>
+                <p class="text-slate-600 dark:text-slate-400">الجمعة: 10:00 ص - 4:00 م (مفتوح)</p>
               </div>
             </div>
           </div>
         </div>
         <div class="w-full lg:w-2/3">
           <div class="bg-white dark:bg-slate-800 p-8 lg:p-12 rounded-[3rem] shadow-xl shadow-emerald-500/5 border border-gray-100 dark:border-gray-700">
-            <form action="#" class="space-y-6">
+            <form action="{{ route('contact.send') }}" method="POST" class="space-y-6">
+              @csrf
+              @if(session('success'))
+                <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-bold text-emerald-700">{{ session('success') }}</div>
+              @endif
+              @if(session('error'))
+                <div class="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-bold text-rose-700">{{ session('error') }}</div>
+              @endif
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="space-y-2">
                   <label class="block font-bold text-slate-700 dark:text-slate-300 mr-2">الاسم الكامل</label>
-                  <input class="w-full px-6 py-4 rounded-2xl border-gray-100 dark:border-gray-700 dark:bg-slate-900 focus:ring-primary focus:border-primary transition-all" placeholder="أدخل اسمك هنا" type="text" />
+                  <input name="name" class="w-full px-6 py-4 rounded-2xl border-gray-100 dark:border-gray-700 dark:bg-slate-900 focus:ring-primary focus:border-primary transition-all" placeholder="أدخل اسمك هنا" type="text" required />
                 </div>
                 <div class="space-y-2">
                   <label class="block font-bold text-slate-700 dark:text-slate-300 mr-2">البريد الإلكتروني</label>
-                  <input class="w-full px-6 py-4 rounded-2xl border-gray-100 dark:border-gray-700 dark:bg-slate-900 focus:ring-primary focus:border-primary transition-all" placeholder="example@domain.com" type="email" />
+                  <input name="email" class="w-full px-6 py-4 rounded-2xl border-gray-100 dark:border-gray-700 dark:bg-slate-900 focus:ring-primary focus:border-primary transition-all" placeholder="example@domain.com" type="email" required />
                 </div>
               </div>
               <div class="space-y-2">
                 <label class="block font-bold text-slate-700 dark:text-slate-300 mr-2">الموضوع</label>
-                <input class="w-full px-6 py-4 rounded-2xl border-gray-100 dark:border-gray-700 dark:bg-slate-900 focus:ring-primary focus:border-primary transition-all" placeholder="ما هو موضوع استفسارك؟" type="text" />
+                <input name="subject" class="w-full px-6 py-4 rounded-2xl border-gray-100 dark:border-gray-700 dark:bg-slate-900 focus:ring-primary focus:border-primary transition-all" placeholder="ما هو موضوع استفسارك؟" type="text" required />
               </div>
               <div class="space-y-2">
                 <label class="block font-bold text-slate-700 dark:text-slate-300 mr-2">الرسالة</label>
-                <textarea class="w-full px-6 py-4 rounded-2xl border-gray-100 dark:border-gray-700 dark:bg-slate-900 focus:ring-primary focus:border-primary transition-all resize-none" placeholder="اكتب رسالتك بالتفصيل هنا..." rows="6"></textarea>
+                <textarea name="message" class="w-full px-6 py-4 rounded-2xl border-gray-100 dark:border-gray-700 dark:bg-slate-900 focus:ring-primary focus:border-primary transition-all resize-none" placeholder="اكتب رسالتك بالتفصيل هنا..." rows="6" required></textarea>
               </div>
               <button class="w-full bg-primary hover:bg-emerald-600 text-white py-5 rounded-2xl font-black text-lg transition-all transform hover:translate-y-[-2px] shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-3" type="submit">
                 <span class="material-symbols-outlined">send</span>

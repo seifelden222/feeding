@@ -103,6 +103,19 @@
                     </button>
                 </div>
             </header>
+            @if(session('show_systems_button'))
+                <div class="mb-6 p-4 rounded-2xl bg-emerald-50 border border-emerald-100">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="font-bold">تم إنشاء حسابك بنجاح</p>
+                            <p class="text-sm text-slate-600">يمكنك الآن اختيار نظام غذائي من صفحة الأنظمة.</p>
+                        </div>
+                        <div>
+                            <a href="{{ route('systems') }}" class="bg-primary text-white px-4 py-2 rounded-xl font-bold">عرض الأنظمة</a>
+                        </div>
+                    </div>
+                </div>
+            @endif
             <!-- Dashboard Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <!-- BEGIN: Left Column (Calorie & Water) -->
