@@ -107,19 +107,19 @@
                                     @endif
                                 </div>
 
-                                @if($meal->protein_g || $meal->carb_g || $meal->fat_g)
+                                @if(data_get($meal, 'protein_g') || data_get($meal, 'carb_g') || data_get($meal, 'fat_g'))
                                     <div class="grid grid-cols-3 gap-2 text-center text-xs">
                                         <div class="rounded-xl bg-blue-50 p-2">
                                             <p class="text-slate-400">بروتين</p>
-                                            <p class="font-black text-blue-600">{{ $meal->protein_g ?? 0 }}g</p>
+                                            <p class="font-black text-blue-600">{{ data_get($meal, 'protein_g', 0) }}g</p>
                                         </div>
                                         <div class="rounded-xl bg-emerald-50 p-2">
                                             <p class="text-slate-400">كارب</p>
-                                            <p class="font-black text-primary">{{ $meal->carb_g ?? 0 }}g</p>
+                                            <p class="font-black text-primary">{{ data_get($meal, 'carb_g', 0) }}g</p>
                                         </div>
                                         <div class="rounded-xl bg-amber-50 p-2">
                                             <p class="text-slate-400">دهون</p>
-                                            <p class="font-black text-amber-600">{{ $meal->fat_g ?? 0 }}g</p>
+                                            <p class="font-black text-amber-600">{{ data_get($meal, 'fat_g', 0) }}g</p>
                                         </div>
                                     </div>
                                 @endif
